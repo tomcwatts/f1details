@@ -184,7 +184,6 @@ const HeroSection = () => {
             <Card className="f1-border-glow bg-card/50 backdrop-blur">
               <CardContent className="p-6">
                 <h3 className="text-xl font-semibold mb-4 flex items-center">
-                  <Clock className="mr-2 h-5 w-5" />
                   Race Weekend Schedule
                 </h3>
                 <div className="space-y-3">

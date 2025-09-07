@@ -73,6 +73,42 @@ export interface ConstructorStanding {
   constructor: Constructor;
 }
 
+export interface CircuitCharacteristics {
+  length: string;
+  corners: number;
+  drsZones: number;
+  lapRecord?: {
+    time: string;
+    driver: string;
+    year: string;
+  };
+  elevation?: {
+    min: number;
+    max: number;
+  };
+  trackType: 'street' | 'permanent' | 'semi-permanent';
+}
+
+export interface CircuitVisualization {
+  circuitId: string;
+  circuitName: string;
+  location: CircuitLocation;
+  characteristics: CircuitCharacteristics;
+  svgPath?: string;
+  trackLayout?: {
+    width: number;
+    height: number;
+    viewBox: string;
+    path: string;
+  };
+  recentWinners?: RaceWinner[];
+  nextRace?: {
+    date: string;
+    time: string;
+    countdown: string;
+  };
+}
+
 export interface RaceResult {
   position: string;
   number: string;
