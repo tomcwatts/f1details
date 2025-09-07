@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 4 93% 56%; /* F1 Red */
+    --primary-foreground: 210 40% 98%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 195 100% 50%; /* Electric blue */
+    --accent-foreground: 222.2 84% 4.9%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 4 93% 56%;
+    --radius: 0.5rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* F1 Custom Styles */
+.f1-gradient {
+  background: linear-gradient(135deg, #E10600 0%, #FF6B00 100%);
+}
+
+.f1-text-glow {
+  text-shadow: 0 0 20px rgba(225, 6, 0, 0.5);
+}
+
+.f1-border-glow {
+  border: 1px solid rgba(225, 6, 0, 0.3);
+  box-shadow: 0 0 10px rgba(225, 6, 0, 0.1);
+}
+
+.f1-card-hover {
+  transition: all 0.3s ease;
+}
+
+.f1-card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(225, 6, 0, 0.2);
+}
+
+.f1-hero-bg {
+  background: linear-gradient(135deg, rgba(11, 11, 11, 0.9) 0%, rgba(225, 6, 0, 0.1) 100%);
+}
