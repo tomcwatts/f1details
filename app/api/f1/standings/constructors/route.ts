@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import { fetchConstructorStandings } from '@/lib/f1-api';
 
+// Add revalidate for automatic caching
+export const revalidate = 1800; // 30 minutes
+
 export async function GET() {
   try {
     console.log("API: Fetching constructor standings data");
@@ -10,7 +13,11 @@ export async function GET() {
     
     console.log(`API: Successfully fetched ${standings.length} constructor standings`);
     
-    return NextResponse.json(standings);
+    return NextResponse.json(standings, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=1800, stale-while-revalidate=900'
+      }
+    });
   } catch (error) {
     console.error("API: Error fetching constructor standings:", error);
     

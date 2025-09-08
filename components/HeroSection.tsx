@@ -35,8 +35,16 @@ const HeroSection = () => {
         
         const events: F1Event[] = await response.json();
         
-        // Find the next race event
-        const nextRaceEvent = events.find(event => event.isNext && event.eventType === 'race');
+        // Find the next race event - get the next future race
+        const now = new Date();
+        const futureRaces = events
+          .filter(event => {
+            const eventDateTime = new Date(event.utcDateTime);
+            return eventDateTime > now && event.eventType === 'race';
+          })
+          .sort((a, b) => new Date(a.utcDateTime).getTime() - new Date(b.utcDateTime).getTime());
+        
+        const nextRaceEvent = futureRaces[0];
         
         if (nextRaceEvent) {
           setNextRace(nextRaceEvent);
@@ -214,7 +222,7 @@ const HeroSection = () => {
                   </div>
                   
                   {/* Show related sessions */}
-                  {relatedSessions.slice(0, 4).map((session, index) => {
+                  {relatedSessions.slice(0, 4).map((session) => {
                     const sessionIcon = session.eventType === 'qualifying' ? '⏱️' : 
                                        session.eventType === 'sprint' ? '⚡' : '🔧';
                     const sessionName = session.name.replace(` - ${nextRace.name}`, '');

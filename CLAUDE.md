@@ -30,11 +30,12 @@ npm install          # Install all dependencies
 - Historical race results for previous year winners
 - Driver and constructor championship standings
 
-**Caching Strategy** (`lib/cache.ts`):
-- **Schedule Data**: 2-hour cache (`CACHE_KEYS.F1_SCHEDULE`)
-- **Driver Standings**: 30-minute cache (`CACHE_KEYS.DRIVER_STANDINGS`) 
-- **Historical Results**: 24-hour cache (`CACHE_KEYS.RACE_WINNERS`)
-- **Qualifying Results**: Intelligent caching - only fetch for races within 7 days past or 30 days future
+**Caching Strategy** (`lib/next-cache.ts`):
+- **Next.js Built-in Caching**: Uses `unstable_cache` and route-level revalidation
+- **Schedule Data**: 2-hour cache with proper revalidation
+- **Driver Standings**: 30-minute cache with proper revalidation
+- **Historical Results**: 24-hour cache with proper revalidation
+- **Qualifying Results**: 4-hour cache - only fetch for races within 7 days past or 30 days future
 
 **Data Flow Architecture**:
 1. **API Routes** (`app/api/f1/`) fetch from Jolpica API with caching

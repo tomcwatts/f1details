@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { cache, CACHE_KEYS } from './cache';
+import { createCachedFunction, CACHE_TTL } from './next-cache';
 import type { 
   F1Event, 
   QualifyingResult, 
@@ -21,16 +21,8 @@ function shouldFetchQualifying(raceDate: string, currentDate: Date): boolean {
   return daysDiff >= -7 && daysDiff <= 30;
 }
 
-// Function to fetch qualifying results with caching and intelligent filtering
-export async function fetchQualifyingResults(season: number, round: string, raceDate: string): Promise<QualifyingResult[]> {
-  const cacheKey = CACHE_KEYS.QUALIFYING_RESULTS(season, round);
-  
-  // Check cache first
-  const cached = cache.get<QualifyingResult[]>(cacheKey);
-  if (cached) {
-    return cached;
-  }
-
+// Internal function to fetch qualifying results (will be cached)
+async function _fetchQualifyingResults(season: number, round: string, raceDate: string): Promise<QualifyingResult[]> {
   // Don't fetch qualifying for races that are too far in the future or past
   if (!shouldFetchQualifying(raceDate, new Date())) {
     return [];
@@ -42,8 +34,6 @@ export async function fetchQualifyingResults(season: number, round: string, race
     );
 
     if (!response.data?.MRData?.RaceTable?.Races?.[0]?.QualifyingResults) {
-      // Cache empty result to avoid repeated API calls
-      cache.set(cacheKey, [], 3600); // 1 hour cache for empty results
       return [];
     }
 
@@ -67,27 +57,23 @@ export async function fetchQualifyingResults(season: number, round: string, race
       Q3: result.Q3,
     }));
 
-    // Cache qualifying results for 4 hours (longer than main cache)
-    cache.set(cacheKey, results, 14400);
     return results;
   } catch (error) {
     console.error(`Error fetching qualifying results for ${season}/${round}:`, error);
-    // Cache empty result to avoid repeated failed API calls
-    cache.set(cacheKey, [], 1800); // 30 minutes cache for failed requests
     return [];
   }
 }
 
-// Function to fetch last year's race winners with aggressive caching
-export async function fetchLastYearResults(lastYearSeason: number): Promise<Map<string, RaceWinner>> {
-  const cacheKey = CACHE_KEYS.RACE_WINNERS(lastYearSeason);
-  
-  // Check cache first - historical data rarely changes
-  const cached = cache.get<Map<string, RaceWinner>>(cacheKey);
-  if (cached) {
-    return cached;
-  }
+// Cached version of qualifying results fetcher
+export const fetchQualifyingResults = createCachedFunction(
+  _fetchQualifyingResults,
+  'qualifying',
+  CACHE_TTL.QUALIFYING,
+  ['qualifying']
+);
 
+// Internal function to fetch last year's race winners (will be cached)
+async function _fetchLastYearResults(lastYearSeason: number): Promise<Map<string, RaceWinner>> {
   const winners = new Map<string, RaceWinner>();
   
   try {
@@ -96,8 +82,6 @@ export async function fetchLastYearResults(lastYearSeason: number): Promise<Map<
     );
 
     if (!response.data?.MRData?.RaceTable?.Races) {
-      // Cache empty result to avoid repeated API calls
-      cache.set(cacheKey, winners, 7200); // 2 hours cache for empty results
       return winners;
     }
 
@@ -105,7 +89,7 @@ export async function fetchLastYearResults(lastYearSeason: number): Promise<Map<
     
     for (const race of races) {
       if (race.Results && race.Results.length > 0) {
-        const winner = race.Results[0]; // First position is the winner
+        const winner = race.Results[0] as any; // Raw API response format
         const circuitName = race.Circuit.circuitName;
         
         if (winner.Driver && winner.Constructor) {
@@ -127,29 +111,24 @@ export async function fetchLastYearResults(lastYearSeason: number): Promise<Map<
       }
     }
     
-    // Cache historical results for 24 hours - they don't change
-    cache.set(cacheKey, winners, 86400);
-    console.log(`Cached ${winners.size} race winners from ${lastYearSeason}`);
+    console.log(`Fetched ${winners.size} race winners from ${lastYearSeason}`);
     return winners;
   } catch (error) {
     console.error(`Error fetching results for season ${lastYearSeason}:`, error);
-    // Cache empty result to avoid repeated failed calls
-    cache.set(cacheKey, winners, 3600); // 1 hour cache for failed requests
     return winners;
   }
 }
 
-// Function to fetch current season schedule
-export async function fetchF1Schedule(season: number = new Date().getFullYear()): Promise<F1Event[]> {
-  const cacheKey = CACHE_KEYS.F1_SCHEDULE;
-  
-  // Check cache first
-  const cachedData = cache.get<F1Event[]>(cacheKey);
-  if (cachedData) {
-    console.log("Serving F1 schedule from cache");
-    return cachedData;
-  }
+// Cached version of last year results fetcher
+export const fetchLastYearResults = createCachedFunction(
+  _fetchLastYearResults,
+  'race-winners',
+  CACHE_TTL.HISTORICAL,
+  ['historical', 'winners']
+);
 
+// Internal function to fetch current season schedule (will be cached)
+async function _fetchF1Schedule(season: number = new Date().getFullYear()): Promise<F1Event[]> {
   console.log("Fetching fresh F1 schedule data from Jolpica API");
 
   try {
@@ -168,7 +147,6 @@ export async function fetchF1Schedule(season: number = new Date().getFullYear())
     const lastYearWinners = await fetchLastYearResults(lastYearSeason);
 
     const events: F1Event[] = [];
-    const now = new Date();
     
     // Process each race to extract all session types
     for (const race of races) {
@@ -307,26 +285,26 @@ export async function fetchF1Schedule(season: number = new Date().getFullYear())
       }
     }
 
-    // Find the next upcoming event
+    // Find the next upcoming RACE (not just any event)
     const currentDate = new Date();
-    const futureEvents = events.filter(event => {
-      const eventDateTime = new Date(event.utcDateTime);
-      return eventDateTime > currentDate;
-    }).sort((a, b) => new Date(a.utcDateTime).getTime() - new Date(b.utcDateTime).getTime());
+    const futureRaces = events
+      .filter(event => {
+        const eventDateTime = new Date(event.utcDateTime);
+        return eventDateTime > currentDate && event.eventType === 'race';
+      })
+      .sort((a, b) => new Date(a.utcDateTime).getTime() - new Date(b.utcDateTime).getTime());
 
-    if (futureEvents.length > 0) {
-      // Mark the very next event
-      const nextEventId = futureEvents[0].id;
-      const nextEventIndex = events.findIndex(event => event.id === nextEventId);
-      if (nextEventIndex !== -1) {
-        events[nextEventIndex].isNext = true;
-        console.log(`Next event: ${events[nextEventIndex].name} on ${events[nextEventIndex].date}`);
+    if (futureRaces.length > 0) {
+      // Mark the next race event
+      const nextRaceId = futureRaces[0].id;
+      const nextRaceIndex = events.findIndex(event => event.id === nextRaceId);
+      if (nextRaceIndex !== -1) {
+        events[nextRaceIndex].isNext = true;
+        console.log(`Next race: ${events[nextRaceIndex].name} on ${events[nextRaceIndex].date}`);
       }
     }
 
-    // Cache the complete processed data for 2 hours
-    cache.set(cacheKey, events, 7200);
-    console.log(`Cached complete F1 schedule with ${events.length} events`);
+    console.log(`Processed complete F1 schedule with ${events.length} events`);
 
     return events;
   } catch (error) {
@@ -335,17 +313,16 @@ export async function fetchF1Schedule(season: number = new Date().getFullYear())
   }
 }
 
-// Function to fetch driver standings
-export async function fetchDriverStandings(season: number = new Date().getFullYear()): Promise<DriverStanding[]> {
-  const cacheKey = CACHE_KEYS.DRIVER_STANDINGS;
-  
-  // Check cache first
-  const cached = cache.get<DriverStanding[]>(cacheKey);
-  if (cached) {
-    console.log("Serving driver standings from cache");
-    return cached;
-  }
+// Cached version of F1 schedule fetcher
+export const fetchF1Schedule = createCachedFunction(
+  _fetchF1Schedule,
+  'f1-schedule',
+  CACHE_TTL.SCHEDULE,
+  ['schedule', 'f1']
+);
 
+// Internal function to fetch driver standings (will be cached)
+async function _fetchDriverStandings(season: number = new Date().getFullYear()): Promise<DriverStanding[]> {
   try {
     const response = await axios.get<JolpicaStandingsResponse>(
       `${JOLPICA_BASE_URL}/${season}/driverStandings.json`
@@ -356,10 +333,7 @@ export async function fetchDriverStandings(season: number = new Date().getFullYe
     }
 
     const standings = response.data.MRData.StandingsTable.StandingsLists[0].DriverStandings;
-
-    // Cache for 30 minutes - standings change frequently during season
-    cache.set(cacheKey, standings, 1800);
-    console.log(`Cached ${standings.length} driver standings`);
+    console.log(`Fetched ${standings.length} driver standings`);
 
     return standings;
   } catch (error) {
@@ -368,17 +342,16 @@ export async function fetchDriverStandings(season: number = new Date().getFullYe
   }
 }
 
-// Function to fetch constructor standings
-export async function fetchConstructorStandings(season: number = new Date().getFullYear()): Promise<ConstructorStanding[]> {
-  const cacheKey = CACHE_KEYS.CONSTRUCTOR_STANDINGS;
-  
-  // Check cache first
-  const cached = cache.get<ConstructorStanding[]>(cacheKey);
-  if (cached) {
-    console.log("Serving constructor standings from cache");
-    return cached;
-  }
+// Cached version of driver standings fetcher
+export const fetchDriverStandings = createCachedFunction(
+  _fetchDriverStandings,
+  'driver-standings',
+  CACHE_TTL.STANDINGS,
+  ['standings', 'drivers']
+);
 
+// Internal function to fetch constructor standings (will be cached)
+async function _fetchConstructorStandings(season: number = new Date().getFullYear()): Promise<ConstructorStanding[]> {
   try {
     const response = await axios.get<JolpicaStandingsResponse>(
       `${JOLPICA_BASE_URL}/${season}/constructorStandings.json`
@@ -389,10 +362,7 @@ export async function fetchConstructorStandings(season: number = new Date().getF
     }
 
     const standings = response.data.MRData.StandingsTable.StandingsLists[0].ConstructorStandings;
-
-    // Cache for 30 minutes - standings change frequently during season
-    cache.set(cacheKey, standings, 1800);
-    console.log(`Cached ${standings.length} constructor standings`);
+    console.log(`Fetched ${standings.length} constructor standings`);
 
     return standings;
   } catch (error) {
@@ -400,3 +370,11 @@ export async function fetchConstructorStandings(season: number = new Date().getF
     throw error;
   }
 }
+
+// Cached version of constructor standings fetcher
+export const fetchConstructorStandings = createCachedFunction(
+  _fetchConstructorStandings,
+  'constructor-standings',
+  CACHE_TTL.STANDINGS,
+  ['standings', 'constructors']
+);

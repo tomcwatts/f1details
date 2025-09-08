@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import { CircuitVisualization, CircuitCharacteristics } from '@/types/f1';
 import { fetchLastYearResults } from '@/lib/f1-api';
 
+// Add revalidate for automatic caching
+export const revalidate = 86400; // 24 hours
+
 const CIRCUIT_DATA: Record<string, CircuitCharacteristics> = {
   'monaco': {
     length: '3.337 km',

@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import { fetchDriverStandings } from '@/lib/f1-api';
 import type { DriverStanding } from '@/types/f1';
 
+// Add revalidate for automatic caching
+export const revalidate = 1800; // 30 minutes
+
 export async function GET() {
   try {
     console.log("API: Fetching driver standings data");
@@ -28,7 +31,11 @@ export async function GET() {
     
     console.log(`API: Successfully fetched ${mappedStandings.length} driver standings`);
     
-    return NextResponse.json(mappedStandings);
+    return NextResponse.json(mappedStandings, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=1800, stale-while-revalidate=900'
+      }
+    });
   } catch (error) {
     console.error("API: Error fetching driver standings:", error);
     

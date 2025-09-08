@@ -104,7 +104,7 @@ const LiveTiming = () => {
 
   // Simulate live timing updates
   useEffect(() => {
-    let interval;
+    let interval: NodeJS.Timeout;
     if (isLive) {
       interval = setInterval(() => {
         // Update session time
@@ -131,7 +131,7 @@ const LiveTiming = () => {
     return () => clearInterval(interval);
   }, [isLive]);
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
       case 'running': return 'text-green-500';
       case 'pit': return 'text-yellow-500';
