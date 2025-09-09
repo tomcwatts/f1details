@@ -31,7 +31,17 @@
   }
   body {
     @apply bg-background text-foreground;
+    /* Improve variable font rendering for Tourney */
+    font-optical-sizing: auto;
+    font-variation-settings: "wdth" 100;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
+}
+
+/* Default weight for heading font utility */
+.font-heading {
+  font-weight: 700;
 }
 
 /* F1 Custom Styles */

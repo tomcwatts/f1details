@@ -118,7 +118,7 @@ const HeroSection = () => {
       <section className="relative min-h-[80vh] flex items-center justify-center f1-hero-bg">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="text-center">
-            <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-4">
+            <h1 className="font-display text-4xl md:text-6xl font-thin leading-tight mb-4">
               <span className="f1-text-glow">F1 Insights</span>
             </h1>
             <p className="text-lg text-muted-foreground">
@@ -140,7 +140,7 @@ const HeroSection = () => {
               <Badge variant="secondary" className="f1-gradient text-white border-0">
                 Next Race
               </Badge>
-              <h1 className="text-4xl md:text-6xl font-bold leading-tight">
+              <h1 className="font-display text-4xl md:text-6xl font-medium uppercase leading-tight tracking-tight">
                 <span className="f1-text-glow">{nextRace.name}</span>
               </h1>
               <div className="flex items-center space-x-4 text-lg text-muted-foreground">
@@ -191,7 +191,7 @@ const HeroSection = () => {
           <div className="space-y-6">
             <Card className="f1-border-glow bg-card/50 backdrop-blur">
               <CardContent className="p-6">
-                <h3 className="text-xl font-semibold mb-4 flex items-center">
+                <h3 className="font-heading text-xl font-semibold mb-4 flex items-center">
                   Race Weekend Schedule
                 </h3>
                 <div className="space-y-3">
@@ -261,7 +261,7 @@ const HeroSection = () => {
             {/* Circuit Info */}
             <Card className="f1-border-glow bg-card/50 backdrop-blur">
               <CardContent className="p-6">
-                <h3 className="text-xl font-semibold mb-4 flex items-center">
+                <h3 className="font-heading text-xl font-semibold mb-4 flex items-center">
                   <MapPin className="mr-2 h-5 w-5" />
                   Circuit Details
                 </h3>

@@ -1,6 +1,16 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import 'flag-icons/css/flag-icons.min.css'
+import { Tourney } from 'next/font/google'
+import { GeistSans } from 'geist/font/sans'
+import { GeistMono } from 'geist/font/mono'
+
+// Register fonts and expose them as CSS variables for Tailwind
+const fontDisplay = Tourney({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-display',
+})
 
 export const metadata: Metadata = {
   title: 'F1 Insights - Formula 1 Race Data & Analytics',
@@ -14,11 +24,11 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className={`dark ${GeistSans.variable} ${GeistMono.variable} ${fontDisplay.variable}`}>
       <head>
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
       </head>
-      <body className="min-h-screen bg-background text-foreground">
+      <body className="min-h-screen bg-background text-foreground font-sans">
         {children}
       </body>
     </html>

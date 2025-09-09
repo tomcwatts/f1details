@@ -190,19 +190,17 @@ function RaceCard({ race, now: nowProp }: RaceCardProps) {
       <div
         aria-hidden="true"
         className={cn(
-          "ordinal pointer-events-none bg-none absolute right-4 top-1 z-0 px-1 py-0.5 select-none font-heading text-6xl font-black tracking-tighter text-transparent sm:text-4xl md:text-8xl motion-safe:transition-opacity motion-safe:duration-300 motion-safe:group-hover:opacity-60 bg-white/5",
+          "ordinal pointer-events-none bg-none absolute right-4 top-1 z-0 px-1 py-0.5 select-none font-heading text-6xl font-thin tracking-tighter text-white sm:text-4xl md:text-8xl motion-safe:transition-opacity motion-safe:duration-300 motion-safe:group-hover:opacity-60 bg-white/5",
           // make the text outlined and remove the fill color
           // "text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary"
         )}
         style={{
-          WebkitTextStroke: "2px rgba(255,255,255,0.55)",
-          WebkitTextFillColor: "transparent",
-          paintOrder: "stroke fill",
-          fontFamily: "system-ui",
-          color: "transparent",
-          background: "transparent",
-          textShadow:
-            "0 0 0.5px rgba(255,255,255,0), 0 0 1px rgba(255,255,255,0)",
+          // WebkitTextStroke: "2px rgba(255,255,255,0.55)",
+          // WebkitTextFillColor: "transparent",
+          // paintOrder: "stroke fill",
+          // color: "white",
+          // background: "transparent",
+          // textShadow: "0 0 0.5px rgba(255,255,255,0), 0 0 1px rgba(255,255,255,0)",
           maskImage:
             "radial-gradient(60% 60% at 70% 30%, black 20%, transparent 150%)",
         }}

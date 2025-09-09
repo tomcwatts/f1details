@@ -8,6 +8,38 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: [
+          "var(--font-geist-sans)",
+          "system-ui",
+          "ui-sans-serif",
+          "sans-serif",
+        ],
+        mono: [
+          "var(--font-geist-mono)",
+          "ui-monospace",
+          "SFMono-Regular",
+          "Menlo",
+          "Monaco",
+          "Consolas",
+          "Liberation Mono",
+          "Courier New",
+          "monospace",
+        ],
+        heading: [
+          "var(--font-geist-sans)",
+          "system-ui",
+          "ui-sans-serif",
+          "sans-serif",
+        ],
+        display: [
+          "var(--font-display)",
+          "var(--font-geist-sans)",
+          "system-ui",
+          "ui-sans-serif",
+          "sans-serif",
+        ],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
