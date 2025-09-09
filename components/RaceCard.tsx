@@ -1,19 +1,9 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import {
-  LayoutGrid,
-  LayoutList,
-  LayoutTemplate,
-  Palette,
-  ChevronRight,
-  Calendar,
-  Clock,
-  MapPin,
-  Flag as FlagIcon,
-} from "lucide-react";
 import React from "react";
 import type { F1Event } from "@/types/f1";
+import { getFlagCode } from "@/lib/flags";
 
 type RaceCardProps = { race: F1Event; now?: Date };
 
@@ -72,18 +62,6 @@ function getCountdown(target: Date, now: Date) {
   return { label: `in ${minutes}m`, negative: false }
 }
 
-function getDelta(target: Date, now: Date) {
-  const diff = target.getTime() - now.getTime()
-  if (diff <= 0) return { label: "Finished", negative: true }
-  const totalSeconds = Math.floor(diff / 1000)
-  const days = Math.floor(totalSeconds / (3600 * 24))
-  const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600)
-  const minutes = Math.floor((totalSeconds % 3600) / 60)
-  if (days > 0) return { label: `${days} days away`, negative: false }
-  if (hours > 0) return { label: `in ${hours}h ${minutes}m`, negative: false }
-  return { label: `in ${minutes}m`, negative: false }
-}
-
 function getDaysUntilRace(date: Date) {
   const now = new Date();
   const diff = date.getTime() - now.getTime();
@@ -107,6 +85,7 @@ function RaceCard({ race, now: nowProp }: RaceCardProps) {
     race.eventType === "race"
       ? "Grand Prix"
       : race.eventType.charAt(0).toUpperCase() + race.eventType.slice(1);
+  const flagCode = getFlagCode(race.circuitDetails?.location.country, race.location);
 
   return (
     <article
@@ -186,20 +165,41 @@ function RaceCard({ race, now: nowProp }: RaceCardProps) {
           "group-hover:w-[5px]"
         )}
       /> */}
-      {/* oversized round watermark */}
+      {/* oversized flag watermark */}
       <div
         aria-hidden="true"
         className={cn(
-          "pointer-events-none absolute right-4 top-1 z-0 px-1 select-none font-heading text-6xl font-black tracking-tighter text-foreground/20 sm:text-7xl md:text-8xl motion-safe:transition-opacity motion-safe:duration-300 motion-safe:group-hover:opacity-60",
+          "pointer-events-none absolute -right-8 -top-8 z-0 px-1 select-none font-heading text-6xl font-black tracking-tighter text-foreground/20 sm:text-7xl md:text-8xl motion-safe:transition-opacity motion-safe:duration-300 motion-safe:group-hover:opacity-60",
           // make the text outlined and remove the fill color
           // "text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary"
         )}
         style={{
           maskImage:
-            "radial-gradient(60% 60% at 70% 30%, black 40%, transparent 150%)",
+            "radial-gradient(60% 60% at 70% 30%, black 20%, transparent 80%)",
         }}
       >
-        {`R${String(race.round ?? "").padStart(2, "0")}`}
+        {flagCode ? (
+          <div
+            className={cn("fib block w-[24rem] h-[18rem] opacity-10", `fi-${flagCode}`)}
+          />
+        ) : (
+          ''
+        )}
+      </div>
+      {/* oversized round watermark */}
+      <div
+        aria-hidden="true"
+        className={cn(
+          "pointer-events-none absolute right-8 top-1 z-0 px-1 select-none font-heading text-6xl font-black tracking-tighter text-foreground sm:text-4xl md:text-8xl motion-safe:transition-opacity motion-safe:duration-300 motion-safe:group-hover:opacity-60",
+          // make the text outlined and remove the fill color
+          // "text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary"
+        )}
+        style={{
+          maskImage:
+            "radial-gradient(60% 60% at 70% 30%, black 20%, transparent 150%)",
+        }}
+      >
+        R{String(race.round ?? "").padStart(2, "0")}
       </div>
       {/* top row */}
       <div className="flex flex-wrap items-start justify-between gap-3 pl-2 sm:gap-4">

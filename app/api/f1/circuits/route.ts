@@ -169,7 +169,7 @@ export async function GET(request: Request) {
     
     if (circuitId && CIRCUIT_DATA[circuitId]) {
       const circuitName = CIRCUIT_NAME_MAPPING[circuitId] || circuitId.charAt(0).toUpperCase() + circuitId.slice(1);
-      const lastYearWinner = lastYearWinners.get(circuitName);
+      const lastYearWinner = lastYearWinners[circuitName as keyof typeof lastYearWinners];
       
       const circuitVisualization: CircuitVisualization = {
         circuitId,
@@ -191,7 +191,7 @@ export async function GET(request: Request) {
     // Return all circuits with winner data
     const allCircuits = Object.keys(CIRCUIT_DATA).map(id => {
       const circuitName = CIRCUIT_NAME_MAPPING[id] || id.charAt(0).toUpperCase() + id.slice(1);
-      const lastYearWinner = lastYearWinners.get(circuitName);
+      const lastYearWinner = lastYearWinners[circuitName as keyof typeof lastYearWinners];
       
       return {
         circuitId: id,

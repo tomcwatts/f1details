@@ -73,8 +73,9 @@ export const fetchQualifyingResults = createCachedFunction(
 );
 
 // Internal function to fetch last year's race winners (will be cached)
-async function _fetchLastYearResults(lastYearSeason: number): Promise<Map<string, RaceWinner>> {
-  const winners = new Map<string, RaceWinner>();
+// IMPORTANT: Return a plain object (not a Map) so that unstable_cache can serialize/deserialize safely
+async function _fetchLastYearResults(lastYearSeason: number): Promise<Record<string, RaceWinner>> {
+  const winners: Record<string, RaceWinner> = {};
   
   try {
     const response = await axios.get<JolpicaRaceResponse>(
@@ -93,7 +94,7 @@ async function _fetchLastYearResults(lastYearSeason: number): Promise<Map<string
         const circuitName = race.Circuit.circuitName;
         
         if (winner.Driver && winner.Constructor) {
-          winners.set(circuitName, {
+          winners[circuitName] = {
             driver: {
               code: winner.Driver.code,
               givenName: winner.Driver.givenName,
@@ -106,12 +107,12 @@ async function _fetchLastYearResults(lastYearSeason: number): Promise<Map<string
             },
             points: winner.points,
             time: winner.Time?.time,
-          });
+          };
         }
       }
     }
     
-    console.log(`Fetched ${winners.size} race winners from ${lastYearSeason}`);
+    console.log(`Fetched ${Object.keys(winners).length} race winners from ${lastYearSeason}`);
     return winners;
   } catch (error) {
     console.error(`Error fetching results for season ${lastYearSeason}:`, error);
@@ -156,7 +157,7 @@ async function _fetchF1Schedule(season: number = new Date().getFullYear()): Prom
       const qualifyingResults = await fetchQualifyingResults(season, race.round, race.date);
       
       // Get last year's winner for this circuit
-      const lastYearWinner = lastYearWinners.get(circuitName);
+      const lastYearWinner = lastYearWinners[circuitName];
       
       // Add small delay between races to avoid rate limiting
       if (parseInt(race.round) % 5 === 0) {
