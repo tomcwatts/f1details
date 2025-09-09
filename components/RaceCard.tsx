@@ -13,17 +13,9 @@ import {
   Flag as FlagIcon,
 } from "lucide-react";
 import React from "react";
+import type { F1Event } from "@/types/f1";
 
-type RaceEvent = {
-  round: number;
-  name: string;
-  country: string;
-  flag: string;
-  location: string;
-  circuit: string;
-  date: string; // ISO date string in UTC
-  type: string;
-};
+type RaceCardProps = { race: F1Event; now?: Date };
 
 
 function useNow(tickMs = 1000) {
@@ -99,8 +91,9 @@ function getDaysUntilRace(date: Date) {
   return days;
 }
 
-function RaceCard({ race, now }: { race: RaceEvent; now: Date }) {
-  const date = new Date(race.date);
+function RaceCard({ race, now: nowProp }: RaceCardProps) {
+  const now = nowProp ?? useNow(1000);
+  const date = new Date(race.utcDateTime);
   const { label: countdown, negative } = getCountdown(date, now);
   const isPast = negative;
   const chips: string[] = [];
@@ -110,6 +103,10 @@ function RaceCard({ race, now }: { race: RaceEvent; now: Date }) {
   const isSoon =
     !isPast && date.getTime() - now.getTime() < 24 * 60 * 60 * 1000;
   const headingId = React.useId();
+  const displayType =
+    race.eventType === "race"
+      ? "Grand Prix"
+      : race.eventType.charAt(0).toUpperCase() + race.eventType.slice(1);
 
   return (
     <article
@@ -202,7 +199,7 @@ function RaceCard({ race, now }: { race: RaceEvent; now: Date }) {
             "radial-gradient(60% 60% at 70% 30%, black 40%, transparent 150%)",
         }}
       >
-        {`R${race.round.toString().padStart(2, "0")}`}
+        {`R${String(race.round ?? "").padStart(2, "0")}`}
       </div>
       {/* top row */}
       <div className="flex flex-wrap items-start justify-between gap-3 pl-2 sm:gap-4">
@@ -218,7 +215,7 @@ function RaceCard({ race, now }: { race: RaceEvent; now: Date }) {
               {race.name}
             </h3>
             <p className="truncate text-xs text-muted-foreground sm:text-sm">
-            {race.type} • {race.circuit}
+              {displayType} • {race.circuit}
             </p>
           </div>
         </div>
