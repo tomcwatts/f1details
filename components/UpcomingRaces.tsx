@@ -163,6 +163,8 @@ const UpcomingRaces = () => {
           </p>
         </div>
 
+        <div className="mb-52"></div>
+
         <RaceCard
           race={{
             round: 12,
@@ -176,9 +178,7 @@ const UpcomingRaces = () => {
           now={new Date()}
         />
 
-        <div className="mb-12">
-          
-        </div>
+        <div className="mb-52"></div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {upcomingRaces.map((race) => (

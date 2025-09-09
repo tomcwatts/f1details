@@ -36,12 +36,11 @@ function useNow(tickMs = 1000) {
 
 function formatLocalDate(date: Date) {
   try {
-    return date.toLocaleDateString(undefined, {
-      weekday: "short",
-      month: "short",
-      day: "2-digit",
-      year: "numeric",
-    })
+    const weekday = date.toLocaleDateString(undefined, { weekday: "long" })
+    const day = date.getDate()
+    const month = date.toLocaleDateString(undefined, { month: "long" })
+    const year = date.getFullYear()
+    return `${weekday}, ${day} ${month} ${year}`
   } catch {
     return date.toDateString()
   }
@@ -80,6 +79,25 @@ function getCountdown(target: Date, now: Date) {
   return { label: `in ${minutes}m`, negative: false }
 }
 
+function getDelta(target: Date, now: Date) {
+  const diff = target.getTime() - now.getTime()
+  if (diff <= 0) return { label: "Finished", negative: true }
+  const totalSeconds = Math.floor(diff / 1000)
+  const days = Math.floor(totalSeconds / (3600 * 24))
+  const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600)
+  const minutes = Math.floor((totalSeconds % 3600) / 60)
+  if (days > 0) return { label: `${days} days away`, negative: false }
+  if (hours > 0) return { label: `in ${hours}h ${minutes}m`, negative: false }
+  return { label: `in ${minutes}m`, negative: false }
+}
+
+function getDaysUntilRace(date: Date) {
+  const now = new Date();
+  const diff = date.getTime() - now.getTime();
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  return days;
+}
+
 function RaceCard({ race, now }: { race: RaceEvent; now: Date }) {
   const date = new Date(race.date);
   const { label: countdown, negative } = getCountdown(date, now);
@@ -95,10 +113,10 @@ function RaceCard({ race, now }: { race: RaceEvent; now: Date }) {
   return (
     <article
       className={cn(
-        "group relative w-full overflow-hidden rounded-none bg-card p-4 ring-1 ring-border transition",
+        "group relative w-full overflow-hidden rounded-none bg-card p-4 ring-1 ring-white/20 transition",
         "bg-gradient-to-b from-card/80 to-card/60 backdrop-blur-sm",
         "shadow-[0_0_0_1px_var(--color-border)_inset,0_18px_60px_-30px_rgb(0_0_0/0.65)]",
-        "hover:ring-foreground/30 focus-within:ring-foreground/30 sm:p-6 max-w-[800px]",
+        "hover:ring-foreground/30 focus-within:ring-foreground/30 sm:p-6 max-w-[1000px]",
         "transform-gpu",
         !isPast && "motion-safe:group-hover:-translate-y-[1px]",
         !isPast &&
@@ -139,27 +157,27 @@ function RaceCard({ race, now }: { race: RaceEvent; now: Date }) {
         className="pointer-events-none absolute -left-10 top-1/4 h-24 w-24 rounded-full bg-destructive/25 blur-3xl opacity-0 transition-opacity duration-500 motion-safe:group-hover:opacity-40"
       />
       {/* inner stroke */}
-      <div
-        className="pointer-events-none absolute inset-px ring-1 ring-white/5"
+      {/* <div
+        className="pointer-events-none absolute inset-1 ring-1 ring-white/15"
         aria-hidden="true"
-      />
+      /> */}
       {/* corner brackets */}
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-        <span className="absolute left-2 top-2 h-3 w-3 border-l border-t border-white/10" />
-        <span className="absolute right-2 top-2 h-3 w-3 border-r border-t border-white/10" />
-        <span className="absolute bottom-2 left-2 h-3 w-3 border-b border-l border-white/10" />
-        <span className="absolute bottom-2 right-2 h-3 w-3 border-b border-r border-white/10" />
+        <span className="absolute left-2 top-2 h-3 w-3 border-l border-t border-white/20" />
+        <span className="absolute right-2 top-2 h-3 w-3 border-r border-t border-white/20" />
+        <span className="absolute bottom-2 left-2 h-3 w-3 border-b border-l border-white/20" />
+        <span className="absolute bottom-2 right-2 h-3 w-3 border-b border-r border-white/20" />
       </div>
       {/* right-edge hairline accent */}
-      <div
-        className="pointer-events-none absolute inset-y-1 right-0 w-px bg-gradient-to-b from-transparent via-white/10 to-transparent"
+      {/* <div
+        className="pointer-events-none absolute inset-y-1 right-0 w-px bg-gradient-to-b from-transparent via-red-500 to-transparent"
         aria-hidden="true"
-      />
+      /> */}
       {/* bottom hairline accent */}
-      <div
+      {/* <div
         className="pointer-events-none absolute inset-x-1 bottom-0 h-px bg-gradient-to-r from-transparent via-white/8 to-transparent"
         aria-hidden="true"
-      />
+      /> */}
       {/* red accent bar */}
       {/* <div
         aria-hidden="true"
@@ -173,7 +191,11 @@ function RaceCard({ race, now }: { race: RaceEvent; now: Date }) {
       {/* oversized round watermark */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute right-4 top-1 z-0 select-none font-heading text-6xl font-black tracking-tighter text-foreground/5 sm:text-7xl md:text-8xl motion-safe:transition-opacity motion-safe:duration-300 motion-safe:group-hover:opacity-60"
+        className={cn(
+          "pointer-events-none absolute right-4 top-1 z-0 px-1 select-none font-heading text-6xl font-black tracking-tighter text-foreground/20 sm:text-7xl md:text-8xl motion-safe:transition-opacity motion-safe:duration-300 motion-safe:group-hover:opacity-60",
+          // make the text outlined and remove the fill color
+          // "text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary"
+        )}
         style={{
           maskImage:
             "radial-gradient(60% 60% at 70% 30%, black 40%, transparent 150%)",
@@ -195,7 +217,7 @@ function RaceCard({ race, now }: { race: RaceEvent; now: Date }) {
               {race.name}
             </h3>
             <p className="truncate text-xs text-muted-foreground sm:text-sm">
-              {race.location} • {race.circuit}
+              {race.circuit}
             </p>
           </div>
         </div>
@@ -216,15 +238,11 @@ function RaceCard({ race, now }: { race: RaceEvent; now: Date }) {
 
       {/* divider */}
       <div
-        className="my-3 h-px w-full opacity-70"
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(90deg, var(--color-border) 0 10px, transparent 10px 20px)",
-        }}
+        className="mt-5 mb-0 h-px w-full opacity-70 bg-transparent"
       />
 
       {/* details grid */}
-      <div className="relative grid grid-cols-1 gap-3 pl-2 sm:grid-cols-4 sm:gap-4">
+      <div className="relative grid grid-cols-1 gap-3 pl-2 sm:grid-cols-3 sm:gap-4">
         {/* subtle vertical separators on larger screens */}
         <div
           className="pointer-events-none absolute inset-0 hidden sm:block"
@@ -237,26 +255,32 @@ function RaceCard({ race, now }: { race: RaceEvent; now: Date }) {
         <Detail
           label="Date"
           value={formatLocalDate(date)}
-          icon={<Calendar className="h-3.5 w-3.5" />}
+          // icon={<Calendar className="h-3.5 w-3.5" />}
         />
         <Detail
-          label="Local Race Time"
+          label={`Time`}
           value={`${formatLocalTime(date)} ${getTimeZoneAbbr(date)}`}
-          icon={<Clock className="h-3.5 w-3.5" />}
+          // icon={<Clock className="h-3.5 w-3.5" />}
           valueClassName="tabular-nums tracking-tight"
         />
-        <Detail
+        {/* <Detail
           label="Countdown"
           value={countdown}
           emphasis={!isPast}
           status={isPast ? "muted" : "active"}
           icon={<FlagIcon className="h-3.5 w-3.5" />}
           pulse={isSoon}
-        />
-        <Detail
+        /> */}
+        {/* <Detail
           label="Venue"
           value={`${race.location} • ${race.country}`}
-          icon={<MapPin className="h-3.5 w-3.5" />}
+          // icon={<MapPin className="h-3.5 w-3.5" />}
+        /> */}
+
+        <Detail
+          label="Starts in"
+          value={Math.abs(getDaysUntilRace(date)).toString() + " days"}
+          // icon={<FlagIcon className="h-3.5 w-3.5" />}
         />
       </div>
 
