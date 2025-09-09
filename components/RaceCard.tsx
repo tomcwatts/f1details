@@ -1,0 +1,337 @@
+"use client";
+
+import { cn } from "@/lib/utils";
+import {
+  LayoutGrid,
+  LayoutList,
+  LayoutTemplate,
+  Palette,
+  ChevronRight,
+  Calendar,
+  Clock,
+  MapPin,
+  Flag as FlagIcon,
+} from "lucide-react";
+import React from "react";
+
+type RaceEvent = {
+  round: number;
+  name: string;
+  country: string;
+  flag: string;
+  location: string;
+  circuit: string;
+  date: string; // ISO date string in UTC
+};
+
+
+function useNow(tickMs = 1000) {
+  const [now, setNow] = React.useState<Date>(() => new Date())
+  React.useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), tickMs)
+    return () => clearInterval(id)
+  }, [tickMs])
+  return now
+}
+
+function formatLocalDate(date: Date) {
+  try {
+    return date.toLocaleDateString(undefined, {
+      weekday: "short",
+      month: "short",
+      day: "2-digit",
+      year: "numeric",
+    })
+  } catch {
+    return date.toDateString()
+  }
+}
+
+function formatLocalTime(date: Date) {
+  try {
+    return date.toLocaleTimeString(undefined, {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    })
+  } catch {
+    return `${date.getHours()}:${String(date.getMinutes()).padStart(2, "0")}`
+  }
+}
+
+function getTimeZoneAbbr(date: Date) {
+  try {
+    const parts = new Intl.DateTimeFormat(undefined, { timeZoneName: "short" }).formatToParts(date)
+    return parts.find((p) => p.type === "timeZoneName")?.value || ""
+  } catch {
+    return ""
+  }
+}
+
+function getCountdown(target: Date, now: Date) {
+  const diff = target.getTime() - now.getTime()
+  if (diff <= 0) return { label: "Finished", negative: true }
+  const totalSeconds = Math.floor(diff / 1000)
+  const days = Math.floor(totalSeconds / (3600 * 24))
+  const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600)
+  const minutes = Math.floor((totalSeconds % 3600) / 60)
+  if (days > 0) return { label: `${days} days away`, negative: false }
+  if (hours > 0) return { label: `in ${hours}h ${minutes}m`, negative: false }
+  return { label: `in ${minutes}m`, negative: false }
+}
+
+function RaceCard({ race, now }: { race: RaceEvent; now: Date }) {
+  const date = new Date(race.date);
+  const { label: countdown, negative } = getCountdown(date, now);
+  const isPast = negative;
+  const chips: string[] = [];
+  if (race.circuit.toLowerCase().includes("street"))
+    chips.push("Street Circuit");
+  if (race.name.toLowerCase().includes("singapore")) chips.push("Night Race");
+  const isSoon =
+    !isPast && date.getTime() - now.getTime() < 24 * 60 * 60 * 1000;
+  const headingId = React.useId();
+
+  return (
+    <article
+      className={cn(
+        "group relative w-full overflow-hidden rounded-none bg-card p-4 ring-1 ring-border transition",
+        "bg-gradient-to-b from-card/80 to-card/60 backdrop-blur-sm",
+        "shadow-[0_0_0_1px_var(--color-border)_inset,0_18px_60px_-30px_rgb(0_0_0/0.65)]",
+        "hover:ring-foreground/30 focus-within:ring-foreground/30 sm:p-6 max-w-[800px]",
+        "transform-gpu",
+        !isPast && "motion-safe:group-hover:-translate-y-[1px]",
+        !isPast &&
+          "motion-safe:group-hover:shadow-[0_10px_40px_-20px_rgb(155_140_255/0.35)]",
+        isPast && "opacity-80 saturate-75 grayscale-[12%]"
+      )}
+      aria-labelledby={headingId}
+    >
+      {/* shimmer sweep */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -inset-y-10 left-[-40%] z-0 h-[220%] w-[35%] -rotate-12 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 transition duration-700 motion-safe:group-hover:translate-x-[160%] motion-safe:group-hover:opacity-100"
+      />
+      {/* luxe sheen + micro grid */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+        style={{
+          backgroundImage:
+            "radial-gradient(closest-side, rgba(255,255,255,0.10), transparent 70%)",
+          filter: "blur(2px)",
+        }}
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 opacity-[0.05]"
+        style={{
+          backgroundImage:
+            "linear-gradient(to right, var(--color-border) 1px, transparent 1px), linear-gradient(to bottom, var(--color-border) 1px, transparent 1px)",
+          backgroundSize: "28px 28px",
+          maskImage:
+            "linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)",
+        }}
+      />
+      {/* ambient glow on hover */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -left-10 top-1/4 h-24 w-24 rounded-full bg-destructive/25 blur-3xl opacity-0 transition-opacity duration-500 motion-safe:group-hover:opacity-40"
+      />
+      {/* inner stroke */}
+      <div
+        className="pointer-events-none absolute inset-px ring-1 ring-white/5"
+        aria-hidden="true"
+      />
+      {/* corner brackets */}
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        <span className="absolute left-2 top-2 h-3 w-3 border-l border-t border-white/10" />
+        <span className="absolute right-2 top-2 h-3 w-3 border-r border-t border-white/10" />
+        <span className="absolute bottom-2 left-2 h-3 w-3 border-b border-l border-white/10" />
+        <span className="absolute bottom-2 right-2 h-3 w-3 border-b border-r border-white/10" />
+      </div>
+      {/* right-edge hairline accent */}
+      <div
+        className="pointer-events-none absolute inset-y-1 right-0 w-px bg-gradient-to-b from-transparent via-white/10 to-transparent"
+        aria-hidden="true"
+      />
+      {/* bottom hairline accent */}
+      <div
+        className="pointer-events-none absolute inset-x-1 bottom-0 h-px bg-gradient-to-r from-transparent via-white/8 to-transparent"
+        aria-hidden="true"
+      />
+      {/* red accent bar */}
+      {/* <div
+        aria-hidden="true"
+        className={cn(
+          "absolute left-0 top-0 h-full w-[3px] bg-gradient-to-b shadow-[0_0_12px_-2px_rgba(239,68,68,0.7)] transition-all",
+          !isPast && "from-destructive to-destructive/20",
+          isPast && "from-muted to-muted/20 shadow-none",
+          "group-hover:w-[5px]"
+        )}
+      /> */}
+      {/* oversized round watermark */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute right-4 top-1 z-0 select-none font-heading text-6xl font-black tracking-tighter text-foreground/5 sm:text-7xl md:text-8xl motion-safe:transition-opacity motion-safe:duration-300 motion-safe:group-hover:opacity-60"
+        style={{
+          maskImage:
+            "radial-gradient(60% 60% at 70% 30%, black 40%, transparent 150%)",
+        }}
+      >
+        {`R${race.round.toString().padStart(2, "0")}`}
+      </div>
+      {/* top row */}
+      <div className="flex flex-wrap items-start justify-between gap-3 pl-2 sm:gap-4">
+        <div className="flex min-w-0 items-center gap-3">
+          {/* <div className="flex h-7 min-w-16 items-center justify-center rounded-sm bg-gradient-to-b from-secondary to-muted/60 px-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground ring-1 ring-border/80 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.03)]">
+            Round {race.round.toString().padStart(2, "0")}
+          </div> */}
+          <div className="min-w-0">
+            <h3
+              className="truncate font-heading text-base leading-tight tracking-tight sm:text-xl"
+              id={headingId}
+            >
+              {race.name}
+            </h3>
+            <p className="truncate text-xs text-muted-foreground sm:text-sm">
+              {race.location} • {race.circuit}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {chips.length ? (
+        <div className="mt-2 pl-2 flex flex-wrap items-center gap-1.5">
+          {chips.map((c) => (
+            <span
+              key={c}
+              className="rounded-sm bg-muted/40 px-2 py-0.5 text-[10px] uppercase tracking-wide text-muted-foreground ring-1 ring-white/10 motion-safe:transition motion-safe:duration-200 group-hover:ring-white/20"
+            >
+              {c}
+            </span>
+          ))}
+        </div>
+      ) : null}
+
+      {/* divider */}
+      <div
+        className="my-3 h-px w-full opacity-70"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(90deg, var(--color-border) 0 10px, transparent 10px 20px)",
+        }}
+      />
+
+      {/* details grid */}
+      <div className="relative grid grid-cols-1 gap-3 pl-2 sm:grid-cols-4 sm:gap-4">
+        {/* subtle vertical separators on larger screens */}
+        <div
+          className="pointer-events-none absolute inset-0 hidden sm:block"
+          aria-hidden="true"
+        >
+          <span className="absolute left-1/4 top-0 hidden h-full w-px bg-white/8 sm:block" />
+          <span className="absolute left-1/2 top-0 hidden h-full w-px bg-white/8 sm:block" />
+          <span className="absolute left-3/4 top-0 hidden h-full w-px bg-white/8 sm:block" />
+        </div>
+        <Detail
+          label="Date"
+          value={formatLocalDate(date)}
+          icon={<Calendar className="h-3.5 w-3.5" />}
+        />
+        <Detail
+          label="Local Race Time"
+          value={`${formatLocalTime(date)} ${getTimeZoneAbbr(date)}`}
+          icon={<Clock className="h-3.5 w-3.5" />}
+          valueClassName="tabular-nums tracking-tight"
+        />
+        <Detail
+          label="Countdown"
+          value={countdown}
+          emphasis={!isPast}
+          status={isPast ? "muted" : "active"}
+          icon={<FlagIcon className="h-3.5 w-3.5" />}
+          pulse={isSoon}
+        />
+        <Detail
+          label="Venue"
+          value={`${race.location} • ${race.country}`}
+          icon={<MapPin className="h-3.5 w-3.5" />}
+        />
+      </div>
+
+      {/* footer: country + action affordance */}
+      {/* <div className="mt-3 border-t border-border/60 pt-3 flex items-center justify-between pl-2">
+        <span className="text-xs text-muted-foreground">
+          Time shown in your local timezone
+        </span>
+        <span className="inline-flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground hover:underline hover:underline-offset-4">
+          View circuit
+          <ChevronRight
+            className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1"
+            aria-hidden="true"
+          />
+        </span>
+      </div> */}
+
+      {/* focus ring target */}
+      <button
+        type="button"
+        aria-label={`More info about ${race.name}`}
+        className="absolute inset-0 cursor-default rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        tabIndex={0}
+      />
+    </article>
+  );
+}
+
+function Detail({
+  label,
+  value,
+  emphasis,
+  status,
+  icon,
+  valueClassName,
+  pulse,
+}: {
+  label: string
+  value: string
+  emphasis?: boolean
+  status?: "active" | "muted"
+  icon?: React.ReactNode
+  valueClassName?: string
+  pulse?: boolean
+}) {
+  return (
+    <div className="min-w-0">
+      <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-wide text-muted-foreground">
+        {icon ? <span className="text-muted-foreground/80">{icon}</span> : null}
+        <span>{label}</span>
+      </div>
+      <div
+        className={cn(
+          "mt-1 min-w-0 break-words text-sm",
+          emphasis ? "font-semibold text-foreground" : "text-foreground",
+          valueClassName
+        )}
+      >
+        {status === "active" ? (
+          <span className={cn(
+            "inline-flex items-center rounded-full bg-destructive/15 px-2 py-0.5 text-[11px] font-semibold text-destructive ring-1 ring-destructive/40 shadow-[0_0_0_2px_rgba(239,68,68,0.12)]",
+            pulse && "motion-safe:animate-pulse ring-2 ring-destructive/40 shadow-[0_0_0_3px_rgba(239,68,68,0.10)]"
+          )}>
+            {value}
+          </span>
+        ) : status === "muted" ? (
+          <span className="inline-flex items-center rounded-full bg-muted/40 px-2 py-0.5 text-[11px] text-muted-foreground ring-1 ring-border/60">
+            {value}
+          </span>
+        ) : (
+          value
+        )}
+      </div>
+    </div>
+  )
+}
+
+export default RaceCard;
