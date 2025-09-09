@@ -174,6 +174,7 @@ const UpcomingRaces = () => {
             location: "Silverstone",
             circuit: "Silverstone Circuit",
             date: "2025-07-06T14:00:00Z",
+            type: "Grand Prix",
           }}
           now={new Date()}
         />

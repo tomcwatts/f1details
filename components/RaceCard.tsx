@@ -22,6 +22,7 @@ type RaceEvent = {
   location: string;
   circuit: string;
   date: string; // ISO date string in UTC
+  type: string;
 };
 
 
@@ -113,7 +114,7 @@ function RaceCard({ race, now }: { race: RaceEvent; now: Date }) {
   return (
     <article
       className={cn(
-        "group relative w-full overflow-hidden rounded-none bg-card p-4 ring-1 ring-white/20 transition",
+        "group mx-auto relative w-full overflow-hidden rounded-none bg-card p-4 ring-1 ring-white/20 transition",
         "bg-gradient-to-b from-card/80 to-card/60 backdrop-blur-sm",
         "shadow-[0_0_0_1px_var(--color-border)_inset,0_18px_60px_-30px_rgb(0_0_0/0.65)]",
         "hover:ring-foreground/30 focus-within:ring-foreground/30 sm:p-6 max-w-[1000px]",
@@ -211,13 +212,13 @@ function RaceCard({ race, now }: { race: RaceEvent; now: Date }) {
           </div> */}
           <div className="min-w-0">
             <h3
-              className="truncate font-heading text-base leading-tight tracking-tight sm:text-xl"
+              className="truncate font-semibold text-base leading-tight tracking-tight sm:text-xl"
               id={headingId}
             >
               {race.name}
             </h3>
             <p className="truncate text-xs text-muted-foreground sm:text-sm">
-              {race.circuit}
+            {race.type} • {race.circuit}
             </p>
           </div>
         </div>
