@@ -93,7 +93,8 @@ function RaceCard({ race, now: nowProp }: RaceCardProps) {
         "group mx-auto relative w-full overflow-hidden rounded-none bg-card p-4 ring-1 ring-white/20 transition",
         "bg-gradient-to-b from-card/80 to-card/60 backdrop-blur-sm",
         "shadow-[0_0_0_1px_var(--color-border)_inset,0_18px_60px_-30px_rgb(0_0_0/0.65)]",
-        "hover:ring-foreground/30 focus-within:ring-foreground/30 sm:p-6 max-w-[1000px]",
+        "hover:shadow-[0_18px_60px_-30px_rgb(0_0_0/0.65)]",
+        "hover:ring-transparent focus-within:ring-foreground/30 sm:p-6 max-w-[1000px]",
         "transform-gpu",
         !isPast && "motion-safe:group-hover:-translate-y-[1px]",
         !isPast &&
@@ -139,11 +140,11 @@ function RaceCard({ race, now: nowProp }: RaceCardProps) {
         aria-hidden="true"
       /> */}
       {/* corner brackets */}
-      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-        <span className="absolute left-2 top-2 h-3 w-3 border-l border-t border-white/20" />
-        <span className="absolute right-2 top-2 h-3 w-3 border-r border-t border-white/20" />
-        <span className="absolute bottom-2 left-2 h-3 w-3 border-b border-l border-white/20" />
-        <span className="absolute bottom-2 right-2 h-3 w-3 border-b border-r border-white/20" />
+      <div className="pointer-events-none absolute inset-0 transform-gpu motion-safe:transition-[margin] motion-safe:duration-200 group-hover:m-0" aria-hidden="true">
+        <span className="absolute left-2 top-2 h-3 w-3 border-l border-t border-white/35 opacity-70 motion-safe:transition-[top,left,opacity,border-color] motion-safe:duration-[180ms] motion-safe:ease-out group-hover:left-0 group-hover:top-0 group-hover:opacity-100 group-hover:border-white/70" />
+        <span className="absolute right-2 top-2 h-3 w-3 border-r border-t border-white/35 opacity-70 motion-safe:transition-[top,right,opacity,border-color] motion-safe:duration-[180ms] motion-safe:ease-out group-hover:right-0 group-hover:top-0 group-hover:opacity-100 group-hover:border-white/70" />
+        <span className="absolute bottom-2 left-2 h-3 w-3 border-b border-l border-white/35 opacity-70 motion-safe:transition-[bottom,left,opacity,border-color] motion-safe:duration-[180ms] motion-safe:ease-out group-hover:bottom-0 group-hover:left-0 group-hover:opacity-100 group-hover:border-white/70" />
+        <span className="absolute bottom-2 right-2 h-3 w-3 border-b border-r border-white/35 opacity-70 motion-safe:transition-[bottom,right,opacity,border-color] motion-safe:duration-[180ms] motion-safe:ease-out group-hover:bottom-0 group-hover:right-0 group-hover:opacity-100 group-hover:border-white/70" />
       </div>
       {/* right-edge hairline accent */}
       {/* <div
@@ -165,11 +166,11 @@ function RaceCard({ race, now: nowProp }: RaceCardProps) {
           "group-hover:w-[5px]"
         )}
       /> */}
-      {/* oversized flag watermark */}
+      {/* oversized flag background */}
       <div
         aria-hidden="true"
         className={cn(
-          "pointer-events-none absolute -left-32 -top-8 z-0 px-1 select-none font-heading text-6xl font-black tracking-tighter text-foreground/20 sm:text-7xl md:text-8xl motion-safe:transition-opacity motion-safe:duration-300 motion-safe:group-hover:opacity-60",
+          "pointer-events-none absolute -left-32 -top-8 z-0 px-1 select-none font-heading text-6xl font-black tracking-tighter text-foreground/20 sm:text-7xl md:text-8xl transform-gpu motion-safe:transition-[opacity] motion-safe:duration-[1400ms] motion-safe:ease-[cubic-bezier(0.25,1,0.5,1)] motion-safe:group-hover:opacity-75",
           // make the text outlined and remove the fill color
           // "text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary"
         )}
@@ -180,7 +181,8 @@ function RaceCard({ race, now: nowProp }: RaceCardProps) {
       >
         {flagCode ? (
           <div
-            className={cn("fib block w-[124rem] h-[44rem] opacity-30", `fi-${flagCode}`)}
+            className={cn("fib block w-[124rem] h-[44rem] opacity-30 transform-gpu origin-top-left filter motion-safe:transition-[transform,opacity,filter] motion-safe:duration-[1600ms] motion-safe:ease-[cubic-bezier(0.25,1,0.5,1)] motion-safe:group-hover:opacity-70 motion-safe:group-hover:scale-[1.08] motion-safe:group-hover:translate-x-2 motion-safe:group-hover:-translate-y-0.5 motion-safe:group-hover:saturate-115 motion-safe:group-hover:brightness-105", `fi-${flagCode}`)}
+            style={{ willChange: "transform, opacity, filter" }}
           />
         ) : (
           ''
@@ -190,7 +192,7 @@ function RaceCard({ race, now: nowProp }: RaceCardProps) {
       <div
         aria-hidden="true"
         className={cn(
-          "ordinal pointer-events-none bg-none absolute right-4 top-1 z-0 px-1 py-0.5 select-none font-heading text-6xl font-thin tracking-tighter text-white sm:text-4xl md:text-8xl motion-safe:transition-opacity motion-safe:duration-300 motion-safe:group-hover:opacity-60 bg-white/5",
+          "ordinal pointer-events-none bg-none absolute right-4 top-1 z-0 px-1 py-0.5 select-none font-heading text-6xl font-thin tracking-tighter text-white sm:text-4xl md:text-8xl opacity-30 group-hover:opacity-50 bg-white/5 group-hover:bg-white/10",
           // make the text outlined and remove the fill color
           // "text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary"
         )}
