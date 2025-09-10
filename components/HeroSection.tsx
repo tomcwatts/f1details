@@ -140,6 +140,18 @@ const HeroSection = () => {
     );
   }
 
+  function formatLocalDate(date: Date) {
+    try {
+      const weekday = date.toLocaleDateString(undefined, { weekday: "long" })
+      const day = date.getDate()
+      const month = date.toLocaleDateString(undefined, { month: "long" })
+      const year = date.getFullYear()
+      return `${weekday}, ${day} ${month} ${year}`
+    } catch {
+      return date.toDateString()
+    }
+  }
+
   return (
     <section className="relative min-h-[80vh] flex items-center justify-center f1-hero-bg">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20">
@@ -156,16 +168,15 @@ const HeroSection = () => {
               <h1 className="font-display text-4xl md:text-6xl font-black uppercase leading-tight tracking-tight">
                 <span className="f1-text-glow">{nextRace.name}</span>
               </h1>
-              <div className="flex items-center space-x-4 text-lg text-muted-foreground">
+              <div className="flex items-center space-x-4 text-md text-muted-foreground font-normal uppercase tracking-[0.01em]">
                 <div className="flex items-center space-x-2">
-                  {/* <svg className="size-5 text-muted-foreground/60" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <path d="M7 2h10v2H7V2zM5 6V4h2v2H5zm0 8H3V6h2v8zm2 2H5v-2h2v2zm2 2H7v-2h2v2zm2 2H9v-2h2v2zm2 0v2h-2v-2h2zm2-2v2h-2v-2h2zm2-2v2h-2v-2h2zm2-2v2h-2v-2h2zm0-8h2v8h-2V6zm0 0V4h-2v2h2zm-5 2h-4v4h4V8z" fill="currentColor"/> </svg> */}
-                  <svg className="size-5 text-muted-foreground/60" xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 256 256"><path d="M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM72,48v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80H48V48ZM208,208H48V96H208V208Z"></path></svg>
-                  <span>{nextRace.circuit}</span>
+                  <svg className="size-4 text-muted-foreground/60" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 256 256"><path d="M128,64a40,40,0,1,0,40,40A40,40,0,0,0,128,64Zm0,64a24,24,0,1,1,24-24A24,24,0,0,1,128,128Zm0-112a88.1,88.1,0,0,0-88,88c0,31.4,14.51,64.68,42,96.25a254.19,254.19,0,0,0,41.45,38.3,8,8,0,0,0,9.18,0A254.19,254.19,0,0,0,174,200.25c27.45-31.57,42-64.85,42-96.25A88.1,88.1,0,0,0,128,16Zm0,206c-16.53-13-72-60.75-72-118a72,72,0,0,1,144,0C200,161.23,144.53,209,128,222Z"></path></svg>
+                  <span>{nextRace.location}</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   {/* <Calendar className="h-5 w-5" /> */}
-                  <svg className="size-5 text-muted-foreground/60" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <path d="M17 2h-2v2H9V2H7v2H3v18h18V4h-4V2zM7 6h12v2H5V6h2zM5 20V10h14v10H5zm12-2v-4h-4v4h4z" fill="currentColor"/> </svg>
-                  <span>{nextRace.location}</span>
+                  <svg className="size-4 text-muted-foreground/60" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <path d="M17 2h-2v2H9V2H7v2H3v18h18V4h-4V2zM7 6h12v2H5V6h2zM5 20V10h14v10H5zm12-2v-4h-4v4h4z" fill="currentColor"/> </svg>
+                  <span>{formatLocalDate(new Date(nextRace.utcDateTime))}</span>
                 </div>
               </div>
             </div>

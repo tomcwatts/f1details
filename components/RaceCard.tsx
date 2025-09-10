@@ -181,7 +181,7 @@ function RaceCard({ race, now: nowProp }: RaceCardProps) {
       >
         {flagCode ? (
           <div
-            className={cn("fib block w-[124rem] h-[44rem] opacity-30 transform-gpu origin-top-left filter motion-safe:transition-[transform,opacity,filter] motion-safe:duration-[4600ms] motion-safe:ease-[cubic-bezier(0.25,1,0.5,1)] motion-safe:group-hover:opacity-90 motion-safe:group-hover:scale-[1.02] motion-safe:group-hover:translate-x-2 motion-safe:group-hover:-translate-y-0.5 motion-safe:group-hover:saturate-115 motion-safe:group-hover:brightness-105", `fi-${flagCode}`)}
+            className={cn("fib block w-[124rem] h-[44rem] opacity-20 transform-gpu origin-top-left filter motion-safe:transition-[transform,opacity,filter] motion-safe:duration-[4600ms] motion-safe:ease-[cubic-bezier(0.25,1,0.5,1)] motion-safe:group-hover:opacity-90 motion-safe:group-hover:scale-[1.02] motion-safe:group-hover:translate-x-2 motion-safe:group-hover:-translate-y-0.5 motion-safe:group-hover:saturate-115 motion-safe:group-hover:brightness-105", `fi-${flagCode}`)}
             style={{ willChange: "transform, opacity, filter" }}
           />
         ) : (
