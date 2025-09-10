@@ -26,7 +26,7 @@ const UpcomingRaces = () => {
           .sort(
             (a, b) =>
               new Date(a.utcDateTime).getTime() -
-              new Date(b.utcDateTime).getTime()
+              new Date(b.utcDateTime).getTime(),
           );
 
         setUpcomingRaces(raceEvents);
@@ -112,7 +112,7 @@ const UpcomingRaces = () => {
         </div>
 
         {/* View All Races Button */}
-        <div className="text-center mt-12">
+        {/*<div className="text-center mt-12">
           <Button
             size="lg"
             className="f1-gradient text-white border-0 hover:opacity-90"
@@ -120,7 +120,7 @@ const UpcomingRaces = () => {
             View Full {new Date().getFullYear()} Calendar
             <ChevronRight className="ml-2 h-5 w-5" />
           </Button>
-        </div>
+        </div>*/}
       </div>
     </section>
   );

@@ -1,10 +1,10 @@
-import Header from '@/components/Header'
-import HeroSection from '@/components/HeroSection'
-import UpcomingRaces from '@/components/UpcomingRaces'
-import DriversStandings from '@/components/DriversStandings'
-import LiveTiming from '@/components/LiveTiming'
-import CircuitVisualization from '@/components/CircuitVisualization'
-import Footer from '@/components/Footer'
+import Header from "@/components/Header";
+import HeroSection from "@/components/HeroSection";
+import UpcomingRaces from "@/components/UpcomingRaces";
+import DriversStandings from "@/components/DriversStandings";
+import LiveTiming from "@/components/LiveTiming";
+import CircuitVisualization from "@/components/CircuitVisualization";
+import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
@@ -13,7 +13,7 @@ export default function Home() {
       <main>
         <HeroSection />
         <UpcomingRaces />
-        <section className="py-12 bg-gray-900">
+        {/*<section className="py-12 bg-gray-900">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl font-bold text-center text-white mb-8 f1-text-glow">
               Circuit Showcase
@@ -29,11 +29,11 @@ export default function Home() {
               <CircuitVisualization circuitId="austin" interactive />
             </div>
           </div>
-        </section>
+        </section>*/}
         <DriversStandings />
-        <LiveTiming />
+        {/*<LiveTiming />*/}
       </main>
       <Footer />
     </>
-  )
+  );
 }

@@ -1,26 +1,26 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import type { F1Event } from '@/types/f1';
-import { 
-  Calendar, 
-  Clock, 
-  MapPin, 
-  Thermometer, 
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import type { F1Event } from "@/types/f1";
+import {
+  Calendar,
+  Clock,
+  MapPin,
+  Thermometer,
   Wind,
   ChevronRight,
-  Play
-} from 'lucide-react';
+  Play,
+} from "lucide-react";
 
 const HeroSection = () => {
   const [timeToRace, setTimeToRace] = useState({
     days: 0,
     hours: 0,
     minutes: 0,
-    seconds: 0
+    seconds: 0,
   });
   const [nextRace, setNextRace] = useState<F1Event | null>(null);
   const [relatedSessions, setRelatedSessions] = useState<F1Event[]>([]);
@@ -30,38 +30,45 @@ const HeroSection = () => {
   useEffect(() => {
     const fetchNextRace = async () => {
       try {
-        const response = await fetch('/api/f1/schedule');
-        if (!response.ok) throw new Error('Failed to fetch schedule');
-        
+        const response = await fetch("/api/f1/schedule");
+        if (!response.ok) throw new Error("Failed to fetch schedule");
+
         const events: F1Event[] = await response.json();
-        
+
         // Find the next race event - get the next future race
         const now = new Date();
         const futureRaces = events
-          .filter(event => {
+          .filter((event) => {
             const eventDateTime = new Date(event.utcDateTime);
-            return eventDateTime > now && event.eventType === 'race';
+            return eventDateTime > now && event.eventType === "race";
           })
-          .sort((a, b) => new Date(a.utcDateTime).getTime() - new Date(b.utcDateTime).getTime());
-        
+          .sort(
+            (a, b) =>
+              new Date(a.utcDateTime).getTime() -
+              new Date(b.utcDateTime).getTime(),
+          );
+
         const nextRaceEvent = futureRaces[0];
-        
+
         if (nextRaceEvent) {
           setNextRace(nextRaceEvent);
-          
+
           // Find related sessions for this race weekend
-          const raceWeekendSessions = events.filter(event => 
-            event.round === nextRaceEvent.round && 
-            event.eventType !== 'race'
-          ).sort((a, b) => new Date(a.utcDateTime).getTime() - new Date(b.utcDateTime).getTime());
-          
+          const raceWeekendSessions = events
+            .filter((event) => event.round === nextRaceEvent.round)
+            .sort(
+              (a, b) =>
+                new Date(a.utcDateTime).getTime() -
+                new Date(b.utcDateTime).getTime(),
+            );
+
           setRelatedSessions(raceWeekendSessions);
         }
-        
+
         setLoading(false);
       } catch (err) {
-        console.error('Error fetching next race:', err);
-        setError('Failed to load race data');
+        console.error("Error fetching next race:", err);
+        setError("Failed to load race data");
         setLoading(false);
       }
     };
@@ -71,7 +78,7 @@ const HeroSection = () => {
 
   useEffect(() => {
     if (!nextRace) return;
-    
+
     const calculateTimeToRace = () => {
       const now = new Date().getTime();
       const raceTime = new Date(nextRace.utcDateTime).getTime();
@@ -79,8 +86,12 @@ const HeroSection = () => {
 
       if (difference > 0) {
         const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+        const hours = Math.floor(
+          (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+        );
+        const minutes = Math.floor(
+          (difference % (1000 * 60 * 60)) / (1000 * 60),
+        );
         const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
         setTimeToRace({ days, hours, minutes, seconds });
@@ -102,7 +113,7 @@ const HeroSection = () => {
               <div className="h-12 bg-muted rounded mb-4"></div>
               <div className="h-8 bg-muted rounded mb-8"></div>
               <div className="grid grid-cols-4 gap-4 max-w-md mx-auto">
-                {[1,2,3,4].map(i => (
+                {[1, 2, 3, 4].map((i) => (
                   <div key={i} className="h-20 bg-muted rounded"></div>
                 ))}
               </div>
@@ -122,7 +133,7 @@ const HeroSection = () => {
               <span className="f1-text-glow">F1 Insights</span>
             </h1>
             <p className="text-lg text-muted-foreground">
-              {error || 'No upcoming races found'}
+              {error || "No upcoming races found"}
             </p>
           </div>
         </div>
@@ -137,7 +148,10 @@ const HeroSection = () => {
           {/* Left Column - Main Content */}
           <div className="space-y-8">
             <div className="space-y-4">
-              <Badge variant="secondary" className="f1-gradient text-white border-0">
+              <Badge
+                variant="secondary"
+                className="f1-gradient text-white border-0"
+              >
                 Next Race
               </Badge>
               <h1 className="font-display text-4xl md:text-6xl font-medium uppercase leading-tight tracking-tight">
@@ -158,17 +172,22 @@ const HeroSection = () => {
             {/* Countdown Timer */}
             <div className="grid grid-cols-4 gap-4">
               {[
-                { label: 'Days', value: timeToRace.days },
-                { label: 'Hours', value: timeToRace.hours },
-                { label: 'Minutes', value: timeToRace.minutes },
-                { label: 'Seconds', value: timeToRace.seconds }
+                { label: "Days", value: timeToRace.days },
+                { label: "Hours", value: timeToRace.hours },
+                { label: "Minutes", value: timeToRace.minutes },
+                { label: "Seconds", value: timeToRace.seconds },
               ].map((item) => (
-                <Card key={item.label} className="f1-border-glow bg-card/50 backdrop-blur">
+                <Card
+                  key={item.label}
+                  className="f1-border-glow bg-card/50 backdrop-blur"
+                >
                   <CardContent className="p-4 text-center">
                     <div className="text-2xl md:text-3xl font-bold f1-text-glow">
-                      {item.value.toString().padStart(2, '0')}
+                      {item.value.toString().padStart(2, "0")}
                     </div>
-                    <div className="text-sm text-muted-foreground">{item.label}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {item.label}
+                    </div>
                   </CardContent>
                 </Card>
               ))}
@@ -176,7 +195,10 @@ const HeroSection = () => {
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" className="f1-gradient text-white border-0 hover:opacity-90">
+              <Button
+                size="lg"
+                className="f1-gradient text-white border-0 hover:opacity-90"
+              >
                 <Play className="mr-2 h-5 w-5" />
                 Watch Live Timing
               </Button>
@@ -189,77 +211,163 @@ const HeroSection = () => {
 
           {/* Right Column - Race Weekend Schedule */}
           <div className="space-y-6">
-            <Card className="f1-border-glow bg-card/50 backdrop-blur">
-              <CardContent className="p-6">
-                <h3 className="font-heading text-xl font-semibold mb-4 flex items-center">
-                  Race Weekend Schedule
-                </h3>
-                <div className="space-y-3">
+            <div className="relative overflow-hidden bg-background backdrop-blur-sm ring-1 ring-white/20 shadow-[0_0_0_1px_var(--color-border)_inset,0_18px_60px_-30px_rgb(0_0_0/0.65)]">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-8">
+                  <h3 className="font-heading text-xl font-medium tracking-tight text-foreground">
+                    RACE WEEKEND SCHEDULE
+                  </h3>
+                  <div className="h-px flex-1 ml-6 bg-white/20" />
+                </div>
+
+                <div className="space-y-2">
                   {/* Show the race session first */}
-                  <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border-l-4 border-primary">
-                    <div>
-                      <div className="font-medium flex items-center">
-                        <span className="mr-2">🏁</span>
-                        Race
+                  <article className="group relative overflow-hidden  bg-gradient-to-b from-background/80 to-background/60 backdrop-blur-sm p-4 ring-1 ring-white/20 transition transform-gpu motion-safe:group-hover:-translate-y-[1px] motion-safe:group-hover:shadow-[0_8px_25px_-8px_rgba(239,68,68,0.4)] shadow-[0_0_0_1px_var(--color-border)_inset,0_8px_20px_-12px_rgb(0_0_0/0.4)]">
+                    {/* shimmer sweep for race */}
+                    <div
+                      aria-hidden="true"
+                      className="pointer-events-none absolute -inset-y-4 left-[-25%] z-0 h-[150%] w-[20%] -rotate-12 bg-gradient-to-r from-transparent via-white/8 to-transparent opacity-0 transition duration-500 motion-safe:group-hover:translate-x-[200%] motion-safe:group-hover:opacity-100"
+                    />
+                    {/* red accent glow */}
+                    <div
+                      aria-hidden="true"
+                      className="pointer-events-none absolute -left-2 top-1/3 h-8 w-8 rounded-full bg-destructive/40 blur-xl opacity-0 transition-opacity duration-300 motion-safe:group-hover:opacity-60"
+                    />
+                    <div className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-destructive to-destructive/60 shadow-[0_0_8px_-1px_rgba(239,68,68,0.7)] group-hover:bg-red-500" />
+                    <div className="relative flex items-center justify-between">
+                      <div className="min-w-0">
+                        <div className="flex items-center space-x-3">
+                          {/*<div className="flex h-6 w-6 items-center justify-center bg-destructive/20 ring-1 ring-destructive/40">
+                            <div className="h-2 w-2 bg-destructive" />
+                          </div>*/}
+                          <div>
+                            <div className="font-semibold text-foreground tracking-tight text-sm uppercase letter-spacing-widest">
+                              RACE
+                            </div>
+                            <div className="text-xs text-muted-foreground mt-0.5 tracking-wide font-mono uppercase">
+                              {new Date(
+                                nextRace.utcDateTime,
+                              ).toLocaleDateString("en-US", {
+                                weekday: "short",
+                                month: "short",
+                                day: "2-digit",
+                              })}
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                      <div className="text-sm text-muted-foreground">
-                        {new Date(nextRace.utcDateTime).toLocaleDateString('en-US', {
-                          weekday: 'short',
-                          month: 'short',
-                          day: 'numeric'
-                        })}
+                      <div className="text-right">
+                        <div className="font-mono text-sm font-medium tabular-nums tracking-tight text-foreground">
+                          {new Date(nextRace.utcDateTime).toLocaleTimeString(
+                            "en-US",
+                            {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              timeZoneName: "short",
+                            },
+                          )}
+                        </div>
+                        <div className="text-xs text-muted-foreground mt-0.5 font-mono uppercase tracking-wider">
+                          LOCAL TIME
+                        </div>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <div className="font-mono text-sm">
-                        {new Date(nextRace.utcDateTime).toLocaleTimeString('en-US', {
-                          hour: '2-digit',
-                          minute: '2-digit',
-                          timeZoneName: 'short'
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                  
+                  </article>
+
                   {/* Show related sessions */}
-                  {relatedSessions.slice(0, 4).map((session) => {
-                    const sessionIcon = session.eventType === 'qualifying' ? '⏱️' : 
-                                       session.eventType === 'sprint' ? '⚡' : '🔧';
-                    const sessionName = session.name.replace(` - ${nextRace.name}`, '');
-                    
+                  {relatedSessions.slice(0, 5).map((session, index) => {
+                    const sessionType = session.eventType;
+                    const sessionName = session.name.replace(
+                      ` - ${nextRace.name}`,
+                      "",
+                    );
+                    const isQualifying = sessionType === "qualifying";
+                    const isSprint = sessionType === "sprint";
+
                     return (
-                      <div key={session.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                        <div>
-                          <div className="font-medium flex items-center">
-                            <span className="mr-2">{sessionIcon}</span>
-                            {sessionName}
+                      <article
+                        key={session.id}
+                        className="group relative overflow-hidden bg-gradient-to-b from-background/90 to-background/80 backdrop-blur-sm p-4 ring-1 ring-white/15 transition transform-gpu motion-safe:group-hover:-translate-y-[0.5px] shadow-[0_0_0_1px_var(--color-border)_inset,0_4px_12px_-6px_rgb(0_0_0/0.3)] motion-safe:group-hover:shadow-[0_6px_16px_-8px_rgb(0_0_0/0.4)] motion-safe:group-hover:ring-white/25"
+                      >
+                        {/* subtle shimmer for sessions */}
+                        <div
+                          aria-hidden="true"
+                          className="pointer-events-none absolute -inset-y-2 left-[-15%] z-0 h-[120%] w-[15%] -rotate-12 bg-gradient-to-r from-transparent via-white/4 to-transparent opacity-0 transition duration-400 motion-safe:group-hover:translate-x-[180%] motion-safe:group-hover:opacity-100"
+                        />
+                        {/* accent bar with session type colors */}
+                        <div
+                          className={`absolute left-0 top-0 h-full w-1 transition-colors duration-200 ${
+                            isSprint
+                              ? "bg-gradient-to-b from-yellow-500/50 to-yellow-600/30 group-hover:from-yellow-500/70 group-hover:to-yellow-600/50"
+                              : isQualifying
+                                ? "bg-gradient-to-b from-blue-500/50 to-blue-600/30 group-hover:from-blue-500/70 group-hover:to-blue-600/50"
+                                : "bg-gradient-to-b from-white/30 to-white/10 group-hover:from-white/50 group-hover:to-white/20"
+                          }`}
+                        />
+
+                        <div className="relative flex items-center justify-between">
+                          <div className="min-w-0">
+                            <div className="flex items-center space-x-3">
+                              {/*<div
+                                className={`flex h-6 w-6 items-center justify-center ring-1 ${
+                                  isSprint
+                                    ? "bg-yellow-500/20 ring-yellow-500/40"
+                                    : isQualifying
+                                      ? "bg-blue-500/20 ring-blue-500/40"
+                                      : "bg-white/20 ring-white/40"
+                                }`}
+                              >
+                                <div
+                                  className={`h-2 w-2 ${
+                                    isSprint
+                                      ? "bg-yellow-500"
+                                      : isQualifying
+                                        ? "bg-blue-500"
+                                        : "bg-white"
+                                  }`}
+                                />
+                              </div>*/}
+                              <div>
+                                <div className="font-medium text-foreground tracking-tight text-sm uppercase">
+                                  {sessionName.toUpperCase()}
+                                </div>
+                                <div className="text-xs text-muted-foreground mt-0.5 tracking-wide font-mono uppercase">
+                                  {new Date(
+                                    session.utcDateTime,
+                                  ).toLocaleDateString("en-US", {
+                                    weekday: "short",
+                                    month: "short",
+                                    day: "2-digit",
+                                  })}
+                                </div>
+                              </div>
+                            </div>
                           </div>
-                          <div className="text-sm text-muted-foreground">
-                            {new Date(session.utcDateTime).toLocaleDateString('en-US', {
-                              weekday: 'short',
-                              month: 'short',
-                              day: 'numeric'
-                            })}
+                          <div className="text-right">
+                            <div className="font-mono text-sm tabular-nums tracking-tight text-foreground">
+                              {new Date(session.utcDateTime).toLocaleTimeString(
+                                "en-US",
+                                {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                  timeZoneName: "short",
+                                },
+                              )}
+                            </div>
+                            <div className="text-xs text-muted-foreground mt-0.5 font-mono uppercase tracking-wider">
+                              LOCAL TIME
+                            </div>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <div className="font-mono text-sm">
-                            {new Date(session.utcDateTime).toLocaleTimeString('en-US', {
-                              hour: '2-digit',
-                              minute: '2-digit',
-                              timeZoneName: 'short'
-                            })}
-                          </div>
-                        </div>
-                      </div>
+                      </article>
                     );
                   })}
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
             {/* Circuit Info */}
-            <Card className="f1-border-glow bg-card/50 backdrop-blur">
+            {/*<Card className="f1-border-glow bg-card/50 backdrop-blur">
               <CardContent className="p-6">
                 <h3 className="font-heading text-xl font-semibold mb-4 flex items-center">
                   <MapPin className="mr-2 h-5 w-5" />
@@ -270,7 +378,7 @@ const HeroSection = () => {
                     <div className="text-lg font-semibold">{nextRace.circuit}</div>
                     <div className="text-sm text-muted-foreground">{nextRace.location}</div>
                   </div>
-                  
+
                   {nextRace.lastYearWinner && (
                     <div>
                       <div className="text-sm font-semibold text-muted-foreground mb-1">2024 Winner</div>
@@ -282,7 +390,7 @@ const HeroSection = () => {
                       </div>
                     </div>
                   )}
-                  
+
                   {nextRace.hasSprint && (
                     <div className="flex items-center space-x-2">
                       <Badge className="f1-gradient text-white border-0 text-xs">
@@ -292,7 +400,7 @@ const HeroSection = () => {
                   )}
                 </div>
               </CardContent>
-            </Card>
+            </Card>*/}
           </div>
         </div>
       </div>
@@ -301,4 +409,3 @@ const HeroSection = () => {
 };
 
 export default HeroSection;
-
