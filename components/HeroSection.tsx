@@ -159,12 +159,28 @@ const HeroSection = () => {
           {/* Left Column - Main Content */}
           <div className="space-y-8">
             <div className="space-y-4">
-              <Badge
-                variant="secondary"
-                className="f1-gradient text-white border-0"
-              >
-                Next Race
-              </Badge>
+              <div className="relative inline-flex overflow-hidden backdrop-blur-md px-3 py-1.5 ring-1 ring-white/20 shadow-[0_0_0_1px_var(--color-border)_inset,0_4px_16px_-8px_rgb(0_0_0/0.3)]">
+                {/* Corner brackets */}
+                <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+                  <span className="absolute left-0 top-0 h-1.5 w-1.5 border-l border-t border-white/40" />
+                  <span className="absolute right-0 bottom-0 h-1.5 w-1.5 border-b border-r border-white/40" />
+                </div>
+                
+                {/* Subtle grid texture */}
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0"
+                  style={{
+                    backgroundImage:
+                      "linear-gradient(to right, var(--color-border) 1px, transparent 1px), linear-gradient(to bottom, var(--color-border) 1px, transparent 1px)",
+                    backgroundSize: "8px 8px",
+                  }}
+                />
+                
+                <span className="relative text-xs font-medium uppercase tracking-[0.15em] text-foreground/90">
+                  Next Race...
+                </span>
+              </div>
               <h1 className="font-display text-4xl md:text-6xl font-black uppercase leading-tight tracking-tight">
                 <span className="f1-text-glow">{nextRace.name}</span>
               </h1>
