@@ -221,59 +221,6 @@ const HeroSection = () => {
                 </div>
 
                 <div className="space-y-2">
-                  {/* Show the race session first */}
-                  <article className="group relative overflow-hidden  bg-gradient-to-b from-background/80 to-background/60 backdrop-blur-sm p-4 ring-1 ring-white/20 transition transform-gpu motion-safe:group-hover:-translate-y-[1px] motion-safe:group-hover:shadow-[0_8px_25px_-8px_rgba(239,68,68,0.4)] shadow-[0_0_0_1px_var(--color-border)_inset,0_8px_20px_-12px_rgb(0_0_0/0.4)]">
-                    {/* shimmer sweep for race */}
-                    <div
-                      aria-hidden="true"
-                      className="pointer-events-none absolute -inset-y-4 left-[-25%] z-0 h-[150%] w-[20%] -rotate-12 bg-gradient-to-r from-transparent via-white/8 to-transparent opacity-0 transition duration-500 motion-safe:group-hover:translate-x-[200%] motion-safe:group-hover:opacity-100"
-                    />
-                    {/* red accent glow */}
-                    <div
-                      aria-hidden="true"
-                      className="pointer-events-none absolute -left-2 top-1/3 h-8 w-8 rounded-full bg-destructive/40 blur-xl opacity-0 transition-opacity duration-300 motion-safe:group-hover:opacity-60"
-                    />
-                    <div className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-destructive to-destructive/60 shadow-[0_0_8px_-1px_rgba(239,68,68,0.7)] group-hover:bg-red-500" />
-                    <div className="relative flex items-center justify-between">
-                      <div className="min-w-0">
-                        <div className="flex items-center space-x-3">
-                          {/*<div className="flex h-6 w-6 items-center justify-center bg-destructive/20 ring-1 ring-destructive/40">
-                            <div className="h-2 w-2 bg-destructive" />
-                          </div>*/}
-                          <div>
-                            <div className="font-semibold text-foreground tracking-tight text-sm uppercase letter-spacing-widest">
-                              RACE
-                            </div>
-                            <div className="text-xs text-muted-foreground mt-0.5 tracking-wide font-mono uppercase">
-                              {new Date(
-                                nextRace.utcDateTime,
-                              ).toLocaleDateString("en-US", {
-                                weekday: "short",
-                                month: "short",
-                                day: "2-digit",
-                              })}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="font-mono text-sm font-medium tabular-nums tracking-tight text-foreground">
-                          {new Date(nextRace.utcDateTime).toLocaleTimeString(
-                            "en-US",
-                            {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              timeZoneName: "short",
-                            },
-                          )}
-                        </div>
-                        <div className="text-xs text-muted-foreground mt-0.5 font-mono uppercase tracking-wider">
-                          LOCAL TIME
-                        </div>
-                      </div>
-                    </div>
-                  </article>
-
                   {/* Show related sessions */}
                   {relatedSessions.slice(0, 5).map((session, index) => {
                     const sessionType = session.eventType;
@@ -281,6 +228,7 @@ const HeroSection = () => {
                       ` - ${nextRace.name}`,
                       "",
                     );
+                    const isRace = sessionType === "race";
                     const isQualifying = sessionType === "qualifying";
                     const isSprint = sessionType === "sprint";
 
@@ -294,42 +242,40 @@ const HeroSection = () => {
                           aria-hidden="true"
                           className="pointer-events-none absolute -inset-y-2 left-[-15%] z-0 h-[120%] w-[15%] -rotate-12 bg-gradient-to-r from-transparent via-white/4 to-transparent opacity-0 transition duration-400 motion-safe:group-hover:translate-x-[180%] motion-safe:group-hover:opacity-100"
                         />
+                        {/* red accent glow for race */}
+                        {isRace && (
+                          <div
+                            aria-hidden="true"
+                            className="pointer-events-none absolute -left-2 top-1/3 h-8 w-8 bg-destructive/40 blur-xl opacity-0 transition-opacity duration-300 motion-safe:group-hover:opacity-60"
+                          />
+                        )}
+
+                        {/* corner accent for race */}
+                        {/*{isRace && (
+                          <div className="absolute top-0 right-0 w-8 h-8">
+                            <div className="absolute top-1 right-1 w-full h-px bg-gradient-to-l from-destructive/60 to-transparent" />
+                            <div className="absolute bottom-1 right-1 w-px h-full bg-gradient-to-b from-destructive/60 to-transparent" />
+                          </div>
+                        )}*/}
                         {/* accent bar with session type colors */}
                         <div
                           className={`absolute left-0 top-0 h-full w-1 transition-colors duration-200 ${
-                            isSprint
-                              ? "bg-gradient-to-b from-yellow-500/50 to-yellow-600/30 group-hover:from-yellow-500/70 group-hover:to-yellow-600/50"
-                              : isQualifying
-                                ? "bg-gradient-to-b from-blue-500/50 to-blue-600/30 group-hover:from-blue-500/70 group-hover:to-blue-600/50"
-                                : "bg-gradient-to-b from-white/30 to-white/10 group-hover:from-white/50 group-hover:to-white/20"
+                            isRace
+                              ? "bg-gradient-to-b from-destructive via-destructive/80 to-destructive/40 shadow-[0_0_8px_-1px_rgba(239,68,68,0.7)]"
+                              : isSprint
+                                ? "bg-gradient-to-b from-yellow-500/50 to-yellow-600/30 group-hover:from-yellow-500/70 group-hover:to-yellow-600/50"
+                                : isQualifying
+                                  ? "bg-gradient-to-b from-blue-500/50 to-blue-600/30 group-hover:from-blue-500/70 group-hover:to-blue-600/50"
+                                  : "bg-gradient-to-b from-white/30 to-white/10 group-hover:from-white/50 group-hover:to-white/20"
                           }`}
                         />
 
                         <div className="relative flex items-center justify-between">
                           <div className="min-w-0">
                             <div className="flex items-center space-x-3">
-                              {/*<div
-                                className={`flex h-6 w-6 items-center justify-center ring-1 ${
-                                  isSprint
-                                    ? "bg-yellow-500/20 ring-yellow-500/40"
-                                    : isQualifying
-                                      ? "bg-blue-500/20 ring-blue-500/40"
-                                      : "bg-white/20 ring-white/40"
-                                }`}
-                              >
-                                <div
-                                  className={`h-2 w-2 ${
-                                    isSprint
-                                      ? "bg-yellow-500"
-                                      : isQualifying
-                                        ? "bg-blue-500"
-                                        : "bg-white"
-                                  }`}
-                                />
-                              </div>*/}
                               <div>
                                 <div className="font-medium text-foreground tracking-tight text-sm uppercase">
-                                  {sessionName.toUpperCase()}
+                                  {isRace ? "Race" : sessionName.toUpperCase()}
                                 </div>
                                 <div className="text-xs text-muted-foreground mt-0.5 tracking-wide font-mono uppercase">
                                   {new Date(
