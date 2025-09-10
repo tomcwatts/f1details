@@ -106,7 +106,7 @@ function RaceCard({ race, now: nowProp }: RaceCardProps) {
       {/* shimmer sweep */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -inset-y-10 left-[-40%] z-0 h-[220%] w-[35%] -rotate-12 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 transition duration-700 motion-safe:group-hover:translate-x-[160%] motion-safe:group-hover:opacity-100"
+        className="pointer-events-none absolute -inset-y-10 left-[-40%] z-0 h-[220%] w-[35%] -rotate-12 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 transition duration-200 motion-safe:group-hover:translate-x-[120%] motion-safe:group-hover:opacity-100"
       />
       {/* luxe sheen + micro grid */}
       <div
@@ -181,7 +181,7 @@ function RaceCard({ race, now: nowProp }: RaceCardProps) {
       >
         {flagCode ? (
           <div
-            className={cn("fib block w-[124rem] h-[44rem] opacity-30 transform-gpu origin-top-left filter motion-safe:transition-[transform,opacity,filter] motion-safe:duration-[1600ms] motion-safe:ease-[cubic-bezier(0.25,1,0.5,1)] motion-safe:group-hover:opacity-70 motion-safe:group-hover:scale-[1.08] motion-safe:group-hover:translate-x-2 motion-safe:group-hover:-translate-y-0.5 motion-safe:group-hover:saturate-115 motion-safe:group-hover:brightness-105", `fi-${flagCode}`)}
+            className={cn("fib block w-[124rem] h-[44rem] opacity-30 transform-gpu origin-top-left filter motion-safe:transition-[transform,opacity,filter] motion-safe:duration-[4600ms] motion-safe:ease-[cubic-bezier(0.25,1,0.5,1)] motion-safe:group-hover:opacity-90 motion-safe:group-hover:scale-[1.02] motion-safe:group-hover:translate-x-2 motion-safe:group-hover:-translate-y-0.5 motion-safe:group-hover:saturate-115 motion-safe:group-hover:brightness-105", `fi-${flagCode}`)}
             style={{ willChange: "transform, opacity, filter" }}
           />
         ) : (
@@ -192,7 +192,7 @@ function RaceCard({ race, now: nowProp }: RaceCardProps) {
       <div
         aria-hidden="true"
         className={cn(
-          "ordinal pointer-events-none bg-none absolute right-4 top-1 z-0 px-1 py-0.5 select-none font-heading text-6xl font-thin tracking-tighter text-white sm:text-4xl md:text-8xl opacity-30 group-hover:opacity-50 bg-white/5 group-hover:bg-white/10",
+          "font-display ordinal pointer-events-none bg-none absolute right-4 top-1 z-0 px-1 py-0.5 select-none text-6xl font-thin tracking-tighter text-white sm:text-4xl md:text-8xl opacity-30 group-hover:opacity-100 group-hover:font-bold",
           // make the text outlined and remove the fill color
           // "text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary"
         )}
