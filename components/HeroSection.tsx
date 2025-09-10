@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { F1Event } from "@/types/f1";
 import {
@@ -154,42 +153,75 @@ const HeroSection = () => {
               >
                 Next Race
               </Badge>
-              <h1 className="font-display text-4xl md:text-6xl font-medium uppercase leading-tight tracking-tight">
+              <h1 className="font-display text-4xl md:text-6xl font-black uppercase leading-tight tracking-tight">
                 <span className="f1-text-glow">{nextRace.name}</span>
               </h1>
               <div className="flex items-center space-x-4 text-lg text-muted-foreground">
                 <div className="flex items-center space-x-2">
-                  <MapPin className="h-5 w-5" />
+                  {/* <svg className="size-5 text-muted-foreground/60" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <path d="M7 2h10v2H7V2zM5 6V4h2v2H5zm0 8H3V6h2v8zm2 2H5v-2h2v2zm2 2H7v-2h2v2zm2 2H9v-2h2v2zm2 0v2h-2v-2h2zm2-2v2h-2v-2h2zm2-2v2h-2v-2h2zm2-2v2h-2v-2h2zm0-8h2v8h-2V6zm0 0V4h-2v2h2zm-5 2h-4v4h4V8z" fill="currentColor"/> </svg> */}
+                  <svg className="size-5 text-muted-foreground/60" xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 256 256"><path d="M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM72,48v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80H48V48ZM208,208H48V96H208V208Z"></path></svg>
                   <span>{nextRace.circuit}</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Calendar className="h-5 w-5" />
+                  {/* <Calendar className="h-5 w-5" /> */}
+                  <svg className="size-5 text-muted-foreground/60" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <path d="M17 2h-2v2H9V2H7v2H3v18h18V4h-4V2zM7 6h12v2H5V6h2zM5 20V10h14v10H5zm12-2v-4h-4v4h4z" fill="currentColor"/> </svg>
                   <span>{nextRace.location}</span>
                 </div>
               </div>
             </div>
 
             {/* Countdown Timer */}
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
               {[
                 { label: "Days", value: timeToRace.days },
                 { label: "Hours", value: timeToRace.hours },
                 { label: "Minutes", value: timeToRace.minutes },
                 { label: "Seconds", value: timeToRace.seconds },
               ].map((item) => (
-                <Card
+                <div
                   key={item.label}
-                  className="f1-border-glow bg-card/50 backdrop-blur"
+                  className="relative overflow-hidden backdrop-blur-md p-4 ring-1 ring-white/15 shadow-[0_0_0_1px_var(--color-border)_inset,0_8px_32px_-12px_rgb(0_0_0/0.4)]"
                 >
-                  <CardContent className="p-4 text-center">
-                    <div className="text-2xl md:text-3xl font-bold f1-text-glow">
+                  {/* Corner indicators */}
+                  <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+                    <span className="absolute left-0 top-0 h-2 w-2 border-l border-t border-white/30" />
+                    <span className="absolute right-0 bottom-0 h-2 w-2 border-b border-r border-white/30" />
+                  </div>
+
+                  {/* Subtle grid texture */}
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 opacity-[0.04]"
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(to right, var(--color-border) 1px, transparent 1px), linear-gradient(to bottom, var(--color-border) 1px, transparent 1px)",
+                      backgroundSize: "16px 16px",
+                    }}
+                  />
+
+                  <div className="relative text-center">
+                    {/* Main number */}
+                    <div className="font-display text-3xl md:text-4xl font-black tabular-nums tracking-tighter text-foreground">
                       {item.value.toString().padStart(2, "0")}
                     </div>
-                    <div className="text-sm text-muted-foreground">
+
+                    {/* Label */}
+                    <div className="mt-2 text-xs font-medium uppercase tracking-[0.1em] text-muted-foreground">
                       {item.label}
                     </div>
-                  </CardContent>
-                </Card>
+
+                    {/* Tick mark */}
+                    <div className="absolute -bottom-1 left-1/2 h-2 w-px bg-gradient-to-b from-white/25 to-transparent transform -translate-x-1/2" aria-hidden="true" />
+                  </div>
+
+                  {/* Pulsing accent for seconds only */}
+                  {item.label === "Seconds" && (
+                    <div
+                      aria-hidden="true"
+                      className="pointer-events-none absolute -left-1 top-1/2 h-4 w-4 -translate-y-1/2 rounded-full bg-blue-500/15 blur-sm motion-safe:animate-pulse"
+                    />
+                  )}
+                </div>
               ))}
             </div>
 
@@ -222,7 +254,7 @@ const HeroSection = () => {
 
                 <div className="space-y-2">
                   {/* Show related sessions */}
-                  {relatedSessions.slice(0, 5).map((session, index) => {
+                  {relatedSessions.slice(0, 5).map((session) => {
                     const sessionType = session.eventType;
                     const sessionName = session.name.replace(
                       ` - ${nextRace.name}`,
