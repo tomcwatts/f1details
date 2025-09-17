@@ -142,30 +142,33 @@ const HeroSection = () => {
 
   function formatLocalDate(date: Date) {
     try {
-      const weekday = date.toLocaleDateString(undefined, { weekday: "long" })
-      const day = date.getDate()
-      const month = date.toLocaleDateString(undefined, { month: "long" })
-      const year = date.getFullYear()
-      return `${weekday}, ${day} ${month} ${year}`
+      const weekday = date.toLocaleDateString(undefined, { weekday: "long" });
+      const day = date.getDate();
+      const month = date.toLocaleDateString(undefined, { month: "long" });
+      const year = date.getFullYear();
+      return `${weekday}, ${day} ${month} ${year}`;
     } catch {
-      return date.toDateString()
+      return date.toDateString();
     }
   }
 
   return (
     <section className="relative min-h-[80vh] flex items-center justify-center f1-hero-bg">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid lg:grid-cols-5 gap-12 items-center">
           {/* Left Column - Main Content */}
-          <div className="space-y-8">
+          <div className="lg:col-span-3 space-y-8">
             <div className="space-y-4">
               <div className="relative inline-flex overflow-hidden backdrop-blur-md py-1.5 ring-1 ring-white/0 shadow-[0_0_0_1px_var(--color-border)_inset,0_4px_16px_-8px_rgb(0_0_0/0.3)]">
                 {/* Corner brackets */}
-                <div className="hidden pointer-events-none absolute inset-0" aria-hidden="true">
+                <div
+                  className="hidden pointer-events-none absolute inset-0"
+                  aria-hidden="true"
+                >
                   <span className="absolute left-0 top-0 h-1.5 w-1.5 border-l border-t border-white/40" />
                   <span className="absolute right-0 bottom-0 h-1.5 w-1.5 border-b border-r border-white/40" />
                 </div>
-                
+
                 {/* Subtle grid texture */}
                 <div
                   aria-hidden="true"
@@ -176,7 +179,7 @@ const HeroSection = () => {
                     backgroundSize: "8px 8px",
                   }}
                 />
-                
+
                 <span className="relative text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
                   Next Race...
                 </span>
@@ -186,12 +189,30 @@ const HeroSection = () => {
               </h1>
               <div className="flex items-center space-x-4 text-md text-muted-foreground font-normal uppercase tracking-[0.01em]">
                 <div className="flex items-center space-x-2">
-                  <svg className="size-4 text-muted-foreground/60" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 256 256"><path d="M128,64a40,40,0,1,0,40,40A40,40,0,0,0,128,64Zm0,64a24,24,0,1,1,24-24A24,24,0,0,1,128,128Zm0-112a88.1,88.1,0,0,0-88,88c0,31.4,14.51,64.68,42,96.25a254.19,254.19,0,0,0,41.45,38.3,8,8,0,0,0,9.18,0A254.19,254.19,0,0,0,174,200.25c27.45-31.57,42-64.85,42-96.25A88.1,88.1,0,0,0,128,16Zm0,206c-16.53-13-72-60.75-72-118a72,72,0,0,1,144,0C200,161.23,144.53,209,128,222Z"></path></svg>
+                  <svg
+                    className="size-4 text-muted-foreground/60"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="currentColor"
+                    viewBox="0 0 256 256"
+                  >
+                    <path d="M128,64a40,40,0,1,0,40,40A40,40,0,0,0,128,64Zm0,64a24,24,0,1,1,24-24A24,24,0,0,1,128,128Zm0-112a88.1,88.1,0,0,0-88,88c0,31.4,14.51,64.68,42,96.25a254.19,254.19,0,0,0,41.45,38.3,8,8,0,0,0,9.18,0A254.19,254.19,0,0,0,174,200.25c27.45-31.57,42-64.85,42-96.25A88.1,88.1,0,0,0,128,16Zm0,206c-16.53-13-72-60.75-72-118a72,72,0,0,1,144,0C200,161.23,144.53,209,128,222Z"></path>
+                  </svg>
                   <span>{nextRace.location}</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   {/* <Calendar className="h-5 w-5" /> */}
-                  <svg className="size-4 text-muted-foreground/60" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <path d="M17 2h-2v2H9V2H7v2H3v18h18V4h-4V2zM7 6h12v2H5V6h2zM5 20V10h14v10H5zm12-2v-4h-4v4h4z" fill="currentColor"/> </svg>
+                  <svg
+                    className="size-4 text-muted-foreground/60"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                  >
+                    {" "}
+                    <path
+                      d="M17 2h-2v2H9V2H7v2H3v18h18V4h-4V2zM7 6h12v2H5V6h2zM5 20V10h14v10H5zm12-2v-4h-4v4h4z"
+                      fill="currentColor"
+                    />{" "}
+                  </svg>
                   <span>{formatLocalDate(new Date(nextRace.utcDateTime))}</span>
                 </div>
               </div>
@@ -210,7 +231,10 @@ const HeroSection = () => {
                   className="relative overflow-hidden backdrop-blur-md p-4 ring-1 ring-white/15 shadow-[0_0_0_1px_var(--color-border)_inset,0_8px_32px_-12px_rgb(0_0_0/0.4)]"
                 >
                   {/* Corner indicators */}
-                  <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+                  <div
+                    className="pointer-events-none absolute inset-0"
+                    aria-hidden="true"
+                  >
                     <span className="absolute left-0 top-0 h-2 w-2 border-l border-t border-white/30" />
                     <span className="absolute right-0 bottom-0 h-2 w-2 border-b border-r border-white/30" />
                   </div>
@@ -238,7 +262,10 @@ const HeroSection = () => {
                     </div>
 
                     {/* Tick mark */}
-                    <div className="absolute -bottom-1 left-1/2 h-2 w-px bg-gradient-to-b from-white/25 to-transparent transform -translate-x-1/2" aria-hidden="true" />
+                    <div
+                      className="absolute -bottom-1 left-1/2 h-2 w-px bg-gradient-to-b from-white/25 to-transparent transform -translate-x-1/2"
+                      aria-hidden="true"
+                    />
                   </div>
 
                   {/* Pulsing accent for seconds only */}
@@ -269,14 +296,38 @@ const HeroSection = () => {
           </div>
 
           {/* Right Column - Race Weekend Schedule */}
-          <div className="space-y-6">
-            <div className="relative overflow-hidden bg-background backdrop-blur-sm ring-1 ring-white/20 shadow-[0_0_0_1px_var(--color-border)_inset,0_18px_60px_-30px_rgb(0_0_0/0.65)]">
+          <div className="lg:col-span-2 space-y-6">
+            <div className="relative bg-background backdrop-blur-sm ring-1 ring-white/20 overflow-visible shadow-[0_0_0_1px_var(--color-border)_inset,0_18px_60px_-30px_rgb(0_0_0/0.65)]">
+              {/* corner brackets */}
+              <div
+                className="pointer-events-none absolute inset-0"
+                aria-hidden="true"
+              >
+                <span className="absolute -left-[1px] -top-[1px] h-3 w-3 border-l border-t border-white/35 opacity-70" />
+                <span className="absolute -right-[1px] -top-[1px] h-3 w-3 border-r border-t border-white/35 opacity-70" />
+                <span className="absolute -bottom-[1px] -left-[1px] h-3 w-3 border-b border-l border-white/35 opacity-70" />
+                <span className="absolute -bottom-[1px] -right-[1px] h-3 w-3 border-b border-r border-white/35 opacity-70" />
+              </div>
+
               <div className="p-6">
-                <div className="flex items-center justify-between mb-8">
-                  <h3 className="font-heading text-xl font-medium tracking-tight text-foreground">
+                <div
+                  className="top-0 left-0 w-full h-full absolute"
+                  style={{
+                    backgroundImage: "url(/stripe.svg)",
+                    backgroundRepeat: "repeat",
+                    backgroundSize: "8px 8px",
+                    backgroundColor: "rgb(0 0 0 / 0.95)",
+                    opacity: 0,
+                  }}
+                />
+                <div className="relative flex items-center justify-between pb-6 -mx-6 px-6">
+                  {/* Subtle bottom border */}
+                  {/*<div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />*/}
+
+                  <h3 className="relative text-sm font-medium tracking-tight text-muted-foreground">
                     RACE WEEKEND SCHEDULE
                   </h3>
-                  <div className="h-px flex-1 ml-6 bg-white/20" />
+                  {/*<div className="relative h-px flex-1 ml-6 bg-white/20" />*/}
                 </div>
 
                 <div className="space-y-2">
