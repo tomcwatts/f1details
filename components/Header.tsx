@@ -33,10 +33,10 @@ const Header = () => {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <div className="flex items-center space-x-2">
-            <div className="f1-gradient rounded-lg p-2">
+            {/* <div className="f1-gradient rounded-lg p-2">
               <Flag className="h-6 w-6 text-white" />
-            </div>
-            <span className="text-xl font-bold f1-text-glow">F1 Insights</span>
+            </div> */}
+            <span className="text-xl font-black font-display uppercase f1-text-glow">RACE CALENDAR</span>
           </div>
 
           {/* Desktop Navigation */}
