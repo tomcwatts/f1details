@@ -152,6 +152,14 @@ const HeroSection = () => {
     }
   }
 
+  function countDownFontWeight() {
+    if (timeToRace.days) return "font-bold";
+    if (timeToRace.hours) return "font-medium";
+    if (timeToRace.minutes) return "font-thin";
+    if (timeToRace.seconds) return "font-normal";
+    return "font-normal";
+  }
+
   return (
     <section className="relative min-h-[80vh] flex items-center justify-center f1-hero-bg">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20">
@@ -187,7 +195,7 @@ const HeroSection = () => {
               <h1 className="font-display text-4xl md:text-6xl font-black uppercase leading-tight tracking-tight">
                 <span className="f1-text-glow">{nextRace.name}</span>
               </h1>
-              <div className="flex items-center space-x-4 text-md text-muted-foreground font-normal uppercase tracking-[0.01em]">
+              <div className="flex items-center space-x-4 text-sm text-muted-foreground font-normal uppercase tracking-[0.01em]">
                 <div className="flex items-center space-x-2">
                   <svg
                     className="size-4 text-muted-foreground/60"
@@ -252,12 +260,12 @@ const HeroSection = () => {
 
                   <div className="relative text-center">
                     {/* Main number */}
-                    <div className="font-display text-3xl md:text-5xl font-black tabular-nums tracking-tighter text-foreground">
+                    <div className={`font-display text-3xl md:text-6xl font-thin tabular-nums tracking-tighter text-foreground ${countDownFontWeight()}`}>
                       {item.value.toString().padStart(2, "0")}
                     </div>
 
                     {/* Label */}
-                    <div className="mt-1 text-[11px] font-medium uppercase tracking-[0.2em] text-muted-foreground">
+                    <div className="mt-1 text-sm font-medium uppercase tracking-[0.1em] text-muted-foreground/80">
                       {item.label}
                     </div>
 
@@ -280,7 +288,7 @@ const HeroSection = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4">
+            {/*<div className="flex flex-col sm:flex-row gap-4">
               <Button
                 size="lg"
                 className="f1-gradient text-white border-0 hover:opacity-90"
@@ -292,7 +300,7 @@ const HeroSection = () => {
                 View Race Schedule
                 <ChevronRight className="ml-2 h-4 w-4" />
               </Button>
-            </div>
+            </div>*/}
           </div>
 
           {/* Right Column - Race Weekend Schedule */}
